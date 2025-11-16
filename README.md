@@ -1,1 +1,1 @@
-# household-finance-tracker
+# household-billing-tracker
