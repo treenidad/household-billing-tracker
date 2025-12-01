@@ -6,13 +6,10 @@ dotenv.config();
 
 const app = express();
 
-// 🔥 FIX: Allow your Vite frontend URL explicitly
-app.use(
-  cors({
-    origin: "https://solid-guacamole-5vwpjwjj7x5hvxpp-5173.app.github.dev",
-    credentials: true,
-  })
-);
+app.use(cors({
+  origin: "http://localhost:5173",
+  credentials: true
+}));
 
 app.use(express.json());
 
