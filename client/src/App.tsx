@@ -1,19 +1,25 @@
-import { useEffect, useState } from "react";
+import React from "react";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+
+import Login from "./pages/Login";
+import Dashboard from "./pages/Dashboard";
+import Bills from "./pages/Bills";
+import AddBill from "./pages/AddBill";
+import EditBill from "./pages/EditBill";
+import Settings from "./pages/Settings";
 
 function App() {
-  const [message, setMessage] = useState("");
-
-  useEffect(() => {
-    fetch("http://localhost:5000")
-      .then((res) => res.json())
-      .then((data) => setMessage(data.message));
-  }, []);
-
   return (
-    <div>
-      <h1>Client is running</h1>
-      <p>Server says: {message}</p>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Login />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/bills" element={<Bills />} />
+        <Route path="/bills/add" element={<AddBill />} />
+        <Route path="/bills/id:/edit" element={<EditBill />} />
+        <Route path="/settings" element={<Settings />} />
+      </Routes>
+    </BrowserRouter> 
   );
 }
 
