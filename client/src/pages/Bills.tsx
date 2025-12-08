@@ -1,5 +1,5 @@
-import React from "react";
-
-export default function Bills() {
+function Bills() {
   return <h1>Bills Page</h1>;
 }
+
+export default Bills;

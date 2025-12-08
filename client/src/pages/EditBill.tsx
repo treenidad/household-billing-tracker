@@ -1,5 +1,5 @@
-import React from "react";
-
-export default function EditBill() {
+function EditBill() {
   return <h1>EditBill Page</h1>;
 }
+
+export default EditBill;
