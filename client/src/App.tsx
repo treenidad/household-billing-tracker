@@ -1,4 +1,3 @@
-import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import Login from "./pages/Login";
@@ -19,7 +18,7 @@ function App() {
         <Route path="/bills/id:/edit" element={<EditBill />} />
         <Route path="/settings" element={<Settings />} />
       </Routes>
-    </BrowserRouter> 
+    </BrowserRouter>
   );
 }
 
