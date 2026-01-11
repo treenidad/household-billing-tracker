@@ -1,3 +1,11 @@
 # Household Billing Tracker
 
-A React application for tracking household bills, due dates, and monthly expenses (WIP)
+## 🚧 Work in Progress
+
+This project is actively being developed. Features and structure are evolving as the app grows.
+
+## Roadmap
+- [ ] Bill creation & listing
+- [ ] Monthly totals dashboard
+- [ ] Recurring bills
+- [ ] Authentication
