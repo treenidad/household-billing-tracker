@@ -1,12 +1,13 @@
 import { useNavigate } from "react-router-dom";
 
-function Login() {
+function Login({ onLogin }: {onLogin: () => void }) {
   const navigate = useNavigate();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
     // FRONTEND-ONLY: fake login
+    onLogin();
     navigate("/dashboard");
   };
 
@@ -63,5 +64,6 @@ function Login() {
     </div>
   );
 }
+
 
 export default Login;
