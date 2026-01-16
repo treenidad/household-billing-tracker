@@ -8,6 +8,7 @@ import AddBill from "./pages/AddBill";
 import EditBill from "./pages/EditBill";
 import Settings from "./pages/Settings";
 import ProtectedRoute from "./components/ProtectedRoute";
+import Layout from "./components/Layout";
 
 
 
@@ -15,14 +16,14 @@ function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [authChecked, setAuthChecked] = useState(false)
 
-  // ✅ Load auth state on app start
+  // Load auth state on app start
   useEffect(() => {
     const storedAuth = localStorage.getItem("auth");
     if (storedAuth === "true") {
       setIsAuthenticated(true);
     }
 
-    // ✅ Tell app we're done checking
+    // Tell app we're done checking
     setAuthChecked(true);
   }, []);
 
@@ -50,11 +51,22 @@ function App() {
       <Routes>
         <Route path="/login" element={<Login onLogin={handleLogin} />} />
         <Route path="/" element={<Login onLogin={handleLogin} />} />
-        <Route path="/dashboard" element={<ProtectedRoute isAuthenticated={isAuthenticated}><Dashboard onLogout={handleLogout} /></ProtectedRoute>} />
-        <Route path="/bills" element={<Bills />} />
+        <Route path="/dashboard" element={ <ProtectedRoute isAuthenticated={isAuthenticated}>
+          <Layout onLogout={handleLogout} >
+            <Dashboard />
+          </Layout></ProtectedRoute>} />
+        <Route path="/bills" element={ <ProtectedRoute isAuthenticated={isAuthenticated}>
+          <Layout onLogout={handleLogout}>
+            <Bills />
+          </Layout>
+        </ProtectedRoute>} />
         <Route path="/bills/add" element={<AddBill />} />
         <Route path="/bills/:id/edit" element={<EditBill />} />
-        <Route path="/settings" element={<Settings />} />
+        <Route path="/settings" element={<ProtectedRoute isAuthenticated={isAuthenticated}>
+          <Layout onLogout={handleLogout}>
+            <Settings />
+          </Layout>
+        </ProtectedRoute>} />
       </Routes>
     </BrowserRouter>
   );
