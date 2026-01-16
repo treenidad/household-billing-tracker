@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import {
   LineChart,
   Line,
@@ -13,13 +12,7 @@ import {
   Cell,
 } from "recharts";
 
-function Dashboard({ onLogout }: {onLogout: () => void}) {
-  const navigate = useNavigate();
-
-  const handleLogoutClick = () => {
-    onLogout();
-    navigate("/login");
-  }
+function Dashboard() {
 
   const spendingData = [
     { month: "January", rent: 1200, food: 420, utilities: 180, entertainment: 150 },
@@ -75,14 +68,15 @@ function Dashboard({ onLogout }: {onLogout: () => void}) {
           month: "2025",
           total: categoryTotals.reduce((sum, c) => sum + c.value, 0),
         },
+        {
+          month: "2026",
+          total: "7510",
+        },
       ];
 
   return (
     <div className="max-w-6xl mx-auto p-4 sm:p-6">
-      <h1 className="text-xl sm:text-2xl font-bold mb-6">Dashboard</h1>
-      <button onClick={handleLogoutClick} className="fixed right-10 top-10 mb-4 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600">
-        Logout
-      </button>
+      <h1 className="text-xl sm:text-2xl font-bold mb-6">Dashboard Overview</h1>
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
         {/* Total Spending Card */}
         <div className="bg-white rounded-xl shadow p-4">
