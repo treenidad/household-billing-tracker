@@ -60,13 +60,24 @@ function App() {
             <Bills />
           </Layout>
         </ProtectedRoute>} />
-        <Route path="/bills/add" element={<AddBill />} />
-        <Route path="/bills/:id/edit" element={<EditBill />} />
-        <Route path="/settings" element={<ProtectedRoute isAuthenticated={isAuthenticated}>
+        <Route path="/bills/add" element={ <ProtectedRoute isAuthenticated={isAuthenticated}>
           <Layout onLogout={handleLogout}>
-            <Settings />
+            <AddBill />
           </Layout>
         </ProtectedRoute>} />
+        <Route path="/bills/:id/edit" element={ 
+          <ProtectedRoute isAuthenticated={isAuthenticated}>
+            <Layout onLogout={handleLogout}> 
+              <EditBill />
+            </Layout>
+          </ProtectedRoute>} />
+        <Route path="/settings" element={
+          <ProtectedRoute isAuthenticated={isAuthenticated}>
+            <Layout onLogout={handleLogout}>
+              <Settings />
+            </Layout>
+          </ProtectedRoute>} 
+        />
       </Routes>
     </BrowserRouter>
   );
