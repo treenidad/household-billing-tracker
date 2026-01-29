@@ -10,11 +10,35 @@ import Settings from "./pages/Settings";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Layout from "./components/Layout";
 
-
+export type Bill = {
+  id: number;
+  billName: string;
+  dueDate: string;
+  totalAmount: number;
+  yourShare: number;
+  status: "Paid" | "Due" | "Overdue" | "Draft";
+};
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [authChecked, setAuthChecked] = useState(false)
+
+  // Load bills from local storage
+  const [bills, setBills] = useState<Bill[]>(() => {
+    try{
+
+      const stored = localStorage.getItem("bills");
+      const parsed = stored ? JSON.parse(stored) : [];
+      return Array.isArray(parsed) ? parsed : [];
+    } catch {
+      return [];
+    }
+    });
+
+  // Persist bills whenever they change
+  useEffect(() => {
+    localStorage.setItem("bills", JSON.stringify(bills));
+  }, [bills]);  
 
   // Load auth state on app start
   useEffect(() => {
@@ -51,36 +75,45 @@ function App() {
       <Routes>
         <Route path="/login" element={<Login onLogin={handleLogin} />} />
         <Route path="/" element={<Login onLogin={handleLogin} />} />
+        
+        // Dashboard Route
         <Route path="/dashboard" element={ <ProtectedRoute isAuthenticated={isAuthenticated}>
           <Layout onLogout={handleLogout} >
             <Dashboard />
           </Layout></ProtectedRoute>} />
+        
+        // Bills Route
         <Route path="/bills" element={ <ProtectedRoute isAuthenticated={isAuthenticated}>
           <Layout onLogout={handleLogout}>
-            <Bills />
+            <Bills bills={bills} />
           </Layout>
         </ProtectedRoute>} />
+        
+        // Add Bill Route
         <Route path="/bills/add" element={ <ProtectedRoute isAuthenticated={isAuthenticated}>
           <Layout onLogout={handleLogout}>
-            <AddBill />
+            <AddBill setBills={setBills}/>
           </Layout>
         </ProtectedRoute>} />
+        
+        // Edit Bill Route
         <Route path="/bills/:id/edit" element={ 
           <ProtectedRoute isAuthenticated={isAuthenticated}>
             <Layout onLogout={handleLogout}> 
               <EditBill />
             </Layout>
           </ProtectedRoute>} />
+        
+        // Settings Route
         <Route path="/settings" element={
           <ProtectedRoute isAuthenticated={isAuthenticated}>
             <Layout onLogout={handleLogout}>
               <Settings />
             </Layout>
           </ProtectedRoute>} 
-        />
+         />
       </Routes>
     </BrowserRouter>
   );
 }
-
 export default App;
