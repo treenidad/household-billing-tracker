@@ -85,7 +85,7 @@ function App() {
         // Bills Route
         <Route path="/bills" element={ <ProtectedRoute isAuthenticated={isAuthenticated}>
           <Layout onLogout={handleLogout}>
-            <Bills bills={bills} />
+            <Bills bills={bills} setBills={setBills}/>
           </Layout>
         </ProtectedRoute>} />
         
@@ -100,7 +100,7 @@ function App() {
         <Route path="/bills/:id/edit" element={ 
           <ProtectedRoute isAuthenticated={isAuthenticated}>
             <Layout onLogout={handleLogout}> 
-              <EditBill />
+              <EditBill bills={bills} setBills={setBills}/>
             </Layout>
           </ProtectedRoute>} />
         

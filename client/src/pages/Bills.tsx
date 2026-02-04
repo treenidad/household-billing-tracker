@@ -1,9 +1,10 @@
 import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
 import type { Bill } from "../App.tsx"
+import type React from "react";
 
 type BillsProps = {
   bills: Bill[];
+  setBills: React.Dispatch<React.SetStateAction<Bill[]>>;
 };
 
 const statusClasses = {
@@ -13,9 +14,16 @@ const statusClasses = {
   Draft: "bg-gray-100 text-gray-700",
 };
 
-function Bills({ bills }: BillsProps) {
+
+
+function Bills({ bills , setBills }: BillsProps) {
   const navigate = useNavigate();
-  
+  const handleDelete = (id: number) => {
+  const confirmed = window.confirm("Delete this bill?");
+  if (!confirmed) return;
+
+  setBills(prev => prev.filter(bill => bill.id !== id))
+}
 
   return (
     <div>
@@ -58,7 +66,20 @@ function Bills({ bills }: BillsProps) {
               className={`px-3 py-1 rounded-full text-sm font-medium ${statusClasses[bill.status] ?? "bg-gray-100 text-gray-700"}`}>
               {bill.status}
             </span>
+
+            <div className="flex items-center gap-3">
+              <button onClick={() => navigate(`/bills/${bill.id}/edit`)} 
+              className="text-indigo-600 hover:underline text-sm">
+                Edit
+              </button>
+
+              <button onClick={() => handleDelete(bill.id)}
+                className="text-red-600 hover:underline text-sm">
+                Delete
+              </button>
+            </div>
           </div>
+          
         ))}
       </div>)}
     </div>
