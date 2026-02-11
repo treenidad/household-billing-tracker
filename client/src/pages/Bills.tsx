@@ -5,6 +5,7 @@ import type React from "react";
 type BillsProps = {
   bills: Bill[];
   setBills: React.Dispatch<React.SetStateAction<Bill[]>>;
+  resetDemoData: () => void;
 };
 
 const statusClasses = {
@@ -16,7 +17,7 @@ const statusClasses = {
 
 
 
-function Bills({ bills , setBills }: BillsProps) {
+function Bills({ bills , setBills, resetDemoData }: BillsProps) {
   const navigate = useNavigate();
   const handleDelete = (id: number) => {
   const confirmed = window.confirm("Delete this bill?");
@@ -29,9 +30,23 @@ function Bills({ bills , setBills }: BillsProps) {
     <div>
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold">Bills Page</h2>
-        <button onClick={() => navigate("/bills/add")} className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition">
-          + Add Bill
-        </button>
+        <div className="grid grid-cols-2 gap-4">
+          <button onClick={() => navigate("/bills/add")} className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition">
+            + Add Bill
+          </button>
+
+          <button
+            onClick={() => {
+              if (confirm("Reset all bills to demo data? This will overwrite your current bills.")) {
+                resetDemoData();
+              } 
+            }
+          }
+          className="px-4 py-2 text-sm rounded bg-gray-200 hover:bg-gray-300"
+          >
+            Reset Demo Data
+          </button>
+        </div>
       </div>
 
       <div className="space-y-4">
@@ -83,7 +98,6 @@ function Bills({ bills , setBills }: BillsProps) {
         ))}
       </div>)}
     </div>
-    
   </div>
   );
 }
