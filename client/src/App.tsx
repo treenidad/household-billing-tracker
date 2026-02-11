@@ -19,21 +19,89 @@ export type Bill = {
   status: "Paid" | "Due" | "Overdue" | "Draft";
 };
 
+
+
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [authChecked, setAuthChecked] = useState(false)
+  const [authChecked, setAuthChecked] = useState(false);
+  const DEMO_KEY = "demo_initialized";
+
+  const demoBills: Bill[] = [
+  {
+    id: 1,
+    billName: "Electricity Bill",
+    dueDate: "2024-07-15",
+    totalAmount: 100,
+    yourShare: 50,
+    status: "Due",
+  },
+  {
+    id: 2,
+    billName: "Water Bill",
+    dueDate: "2024-07-20",
+    totalAmount: 60,
+    yourShare: 30,
+    status: "Paid",
+  },
+  {
+    id: 3,
+    billName: "Internet Bill",
+    dueDate: "2024-07-10",
+    totalAmount: 80,
+    yourShare: 40,
+    status: "Overdue",
+  },
+];
+
+//  Button to Reset the Demo Data - Useful for testing and for users to quickly see the app with sample data
+const resetDemoData = () => {
+  localStorage.setItem("bills", JSON.stringify(demoBills));
+  localStorage.setItem(DEMO_KEY, "true");
+  setBills(demoBills);
+}
 
   // Load bills from local storage
-  const [bills, setBills] = useState<Bill[]>(() => {
-    try{
+  // const [bills, setBills] = useState<Bill[]>(() => {
+  //   try{
 
-      const stored = localStorage.getItem("bills");
-      const parsed = stored ? JSON.parse(stored) : [];
-      return Array.isArray(parsed) ? parsed : [];
-    } catch {
+  //     const stored = localStorage.getItem("bills");
+  //     const parsed = stored ? JSON.parse(stored) : [];
+  //     return Array.isArray(parsed) ? parsed : [];
+  //   } catch {
+  //     return [];
+  //   }
+  //   });
+
+  // Demo data for first time users
+  // const [bills, setBills] = useState<Bill[]>(() => {
+  //   const stored = localStorage.getItem("bills");
+  //   if (stored) return JSON.parse(stored);
+
+  //   localStorage.setItem("bills", JSON.stringify(demoBills));
+  //   return demoBills;
+  // });
+
+  const [bills, setBills] = useState<Bill[]>(() => {
+    try {
+      const storedBills = localStorage.getItem("bills");
+      const demoInitialized = localStorage.getItem(DEMO_KEY);
+
+      if(storedBills) {
+        const parsed = JSON.parse(storedBills);
+        return Array.isArray(parsed) ? parsed : [];
+      }
+
+      if(!demoInitialized) {
+        localStorage.setItem("bills", JSON.stringify(demoBills));
+        localStorage.setItem(DEMO_KEY, "true");
+        return demoBills;
+      }
       return [];
+    } catch (error) {
+      console.error("Error loading bills from localStorage:", error);
+      return demoBills; // Fallback to demo bills if there's an error
     }
-    });
+  });
 
   // Persist bills whenever they change
   useEffect(() => {
@@ -76,27 +144,30 @@ function App() {
         <Route path="/login" element={<Login onLogin={handleLogin} />} />
         <Route path="/" element={<Login onLogin={handleLogin} />} />
         
-        // Dashboard Route
+        {/* Dashboard Route */}
         <Route path="/dashboard" element={ <ProtectedRoute isAuthenticated={isAuthenticated}>
           <Layout onLogout={handleLogout} >
             <Dashboard />
           </Layout></ProtectedRoute>} />
         
-        // Bills Route
+        {/* Bills Route */}
         <Route path="/bills" element={ <ProtectedRoute isAuthenticated={isAuthenticated}>
           <Layout onLogout={handleLogout}>
-            <Bills bills={bills} setBills={setBills}/>
+            <Bills 
+              bills={bills} 
+              setBills={setBills}
+              resetDemoData={resetDemoData}/>
           </Layout>
         </ProtectedRoute>} />
         
-        // Add Bill Route
+        {/* Add Bill Route */}
         <Route path="/bills/add" element={ <ProtectedRoute isAuthenticated={isAuthenticated}>
           <Layout onLogout={handleLogout}>
             <AddBill setBills={setBills}/>
           </Layout>
         </ProtectedRoute>} />
         
-        // Edit Bill Route
+        {/* Edit Bill Route */}
         <Route path="/bills/:id/edit" element={ 
           <ProtectedRoute isAuthenticated={isAuthenticated}>
             <Layout onLogout={handleLogout}> 
@@ -104,7 +175,7 @@ function App() {
             </Layout>
           </ProtectedRoute>} />
         
-        // Settings Route
+        {/* // Settings Route */}
         <Route path="/settings" element={
           <ProtectedRoute isAuthenticated={isAuthenticated}>
             <Layout onLogout={handleLogout}>
