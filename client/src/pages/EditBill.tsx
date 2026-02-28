@@ -1,6 +1,6 @@
 import { useParams, useNavigate } from "react-router-dom";
-import React, { useEffect, useState } from "react"
-import type { Bill } from "../App"
+import React, { useEffect, useState } from "react";
+import type { Bill } from "../App";
 
 type EditBillProps = {
   bills: Bill[];
@@ -11,90 +11,128 @@ function EditBill({ bills, setBills }: EditBillProps) {
   const {id} = useParams();
   const navigate = useNavigate();
 
-  const billToEdit = bills.find(b => b.id === Number(id))
+  const billId = Number(id);
+  const billToEdit = bills.find(bill => bill.id === billId)
 
-  const [billName, setBillName] = useState("");
-  const [dueDate, setDueDate] = useState("");
-  const [totalAmount, setTotalAmount] = useState("");
-  const [yourShare, setYourShare] = useState("");
-  const [status, setStatus] = useState<Bill["status"]>("Due");
+  const [formData, setFormData] = useState<Bill | null>(null);
+  const [error, setError] = useState("");
 
-  useEffect(() => {
-    if (!billToEdit) {
-      navigate("/bills");
-    }
-  }, [billToEdit, navigate])
-
+  // Load existing bill data into form state
   useEffect(() => {
     if (billToEdit) {
-      setBillName(billToEdit.billName);
-      setDueDate(billToEdit.dueDate);
-      setTotalAmount(String(billToEdit.totalAmount));
-      setYourShare(String(billToEdit.yourShare));
-      setStatus(billToEdit.status);
+      setFormData(billToEdit);
     }
   }, [billToEdit]);
+
+  // Handle invalid bill id
+  if (!billToEdit) {
+    return (
+      <div>
+        <h2>Bill not found</h2>
+        <button 
+          onClick={() => navigate("/bills")}
+          className="px-4 py-2 bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold rounded">
+            Back to Bills
+          </button>
+      </div>
+    )
+  }
+
+  if (!formData) return null;
+
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormData(prev =>
+      prev
+        ? {
+            ...prev,
+            [name]:
+              name === "totalAmount" || name === "yourShare"
+              ? Number(value)
+              : value,
+          }
+        : prev
+    );
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
+    // Basic validation
+    if (!formData.billName.trim()) {
+      setError("Bill name is required");
+      return;
+    }
+    if (formData.totalAmount <= 0) {
+      setError("Total amount must be greater than 0");
+      return;
+    }
+
+    setError("");
+
     setBills(prev =>
       prev.map(bill =>
-        bill.id === billToEdit!.id
-        ? {
-          ...bill,
-          billName,
-          dueDate,
-          totalAmount: Number(totalAmount),
-          yourShare: Number(yourShare),
-          status,
-        }
-        : bill
+        bill.id === billId ? formData : bill
       )
     );
 
     navigate("/bills");
-  }
+  };
+
   return (
     <div className="max-w-xl mx-auto bg-white rounded-xl shadow p-8">
-      <h2 className="text-2xl font-bold mb-6">EditBill Page</h2>
+      <h2 className="text-2xl font-bold mb-6">Edit Bill</h2>
+
+      {error && (
+        <p className="text-red-500 text-sm mb-4">
+          {error}
+        </p>
+      )}
 
       <form onSubmit={handleSubmit} className="space-y-5">
         <input 
           type="text" 
           placeholder="Bill Name" 
-          value={billName} 
-          onChange={e => setBillName(e.target.value)} 
+          name="billName"
+          value={formData.billName || ""} 
+          onChange={handleChange} 
           required 
           className="w-full border rounded-lg px-4 py-2"
         />
         <input 
           type="date" 
           placeholder="Due Date" 
-          value={dueDate} 
-          onChange={e => setDueDate(e.target.value)} 
+          name="dueDate"
+          value={formData?.dueDate || ""} 
+          onChange={handleChange} 
           required 
           className="w-full border rounded-lg px-4 py-2"
         />
         <input 
           type="number" 
           placeholder="Total Amount" 
-          value={totalAmount} 
-          onChange={e => setTotalAmount(e.target.value)} 
+          name="totalAmount"
+          value={formData?.totalAmount || 0} 
+          onChange={handleChange} 
           required 
           className="w-full border rounded-lg px-4 py-2"
         />
         <input 
           type="number" 
           placeholder="Your Share" 
-          value={yourShare} 
-          onChange={e => setYourShare(e.target.value)} 
+          name="yourShare"
+          value={formData?.yourShare || 0} 
+          onChange={handleChange} 
           required 
           className="w-full border rounded-lg px-4 py-2"
         />
         <select 
-          value={status} 
-          onChange={e => setStatus(e.target.value as Bill["status"])} required
+          value={formData?.status || "Due"} 
+          onChange={handleChange} 
+          name="status"
+          required
           className="w-full border rounded-lg px-4 py-2"
         >
           <option value="Due">Due</option>
