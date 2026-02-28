@@ -1,6 +1,8 @@
 import { useNavigate } from "react-router-dom";
 import type { Bill } from "../App.tsx"
 import type React from "react";
+import ConfirmModal from "../components/ConfirmModal";
+import { useState } from "react";
 
 type BillsProps = {
   bills: Bill[];
@@ -18,13 +20,26 @@ const statusClasses = {
 
 
 function Bills({ bills , setBills, resetDemoData }: BillsProps) {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [billToDelete, setBillToDelete] = useState<number | null>(null)
+  
   const navigate = useNavigate();
-  const handleDelete = (id: number) => {
-  const confirmed = window.confirm("Delete this bill?");
-  if (!confirmed) return;
+  const handleDeleteClick = (id: number) => {
+    setBillToDelete(id);
+    setIsModalOpen(true);
+  };
+  const confirmDelete = () => {
+    if (billToDelete === null) return;
 
-  setBills(prev => prev.filter(bill => bill.id !== id))
-}
+    setBills((prev) => prev.filter((b) => b.id !== billToDelete));
+
+    setIsModalOpen(false);
+    setBillToDelete(null);
+  }
+  const cancelDelete = () => {
+    setIsModalOpen(false);
+    setBillToDelete(null);
+  }
 
   return (
     <div>
@@ -88,7 +103,7 @@ function Bills({ bills , setBills, resetDemoData }: BillsProps) {
                 Edit
               </button>
 
-              <button onClick={() => handleDelete(bill.id)}
+              <button onClick={() => handleDeleteClick(bill.id)}
                 className="text-red-600 hover:underline text-sm">
                 Delete
               </button>
@@ -98,6 +113,13 @@ function Bills({ bills , setBills, resetDemoData }: BillsProps) {
         ))}
       </div>)}
     </div>
+    <ConfirmModal
+      isOpen={isModalOpen}
+      title="Delete Bill"
+      message="Are you sure you want to delete this bill? This action cannot be undone."
+      onConfirm={confirmDelete}
+      onCancel={cancelDelete}
+    />
   </div>
   );
 }
