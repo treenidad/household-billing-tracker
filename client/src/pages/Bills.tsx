@@ -17,8 +17,6 @@ const statusClasses = {
   Draft: "bg-gray-100 text-gray-700",
 };
 
-
-
 function Bills({ bills , setBills, resetDemoData }: BillsProps) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [billToDelete, setBillToDelete] = useState<number | null>(null)

@@ -7,38 +7,64 @@ type AddBillProps = {
   setBills: React.Dispatch<React.SetStateAction<Bill[]>>;
 };
 
+type BillFormData = Omit<Bill, "id">;
 
 function AddBill({ setBills }: AddBillProps) {
   const navigate = useNavigate();
 
-  const [billName, setBillName] = useState(""); 
-  const [dueDate, setDueDate] = useState("");
-  const [totalAmount, setTotalAmount] = useState("");
-  const [yourShare, setYourShare] = useState("");
+  // const [billName, setBillName] = useState(""); 
+  // const [dueDate, setDueDate] = useState("");
+  // const [totalAmount, setTotalAmount] = useState("");
+  // const [yourShare, setYourShare] = useState("");
+  
+  const [formData, setFormData] = useState<BillFormData>({
+      billName: "",
+      dueDate: "",
+      totalAmount: 0,
+      yourShare: 0,
+      status: "Due"
+    });
+
+  const [error, setError] = useState("");
+    
+  // const today = new Date().toISOString().split('T')[0];
+
+  const handleChange = (
+  e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const { name, value } = e.target;
+
+    setFormData(prev => ({
+      ...prev,
+      [name]:
+        name === "totalAmount" || name === "yourShare"
+          ? Number(value)
+          : value
+    }));
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    const newBill: Bill = {
+    // Basic validation
+    if (!formData.billName.trim()) {
+      setError("Bill name is required");
+      return;
+    }
+
+    if (formData.totalAmount <= 0) {
+      setError("Total amount must be greater than 0");
+      return;
+    }
+    const newBill: Bill = { 
       id: Date.now(),
-      billName,
-      dueDate,
-      totalAmount: Number(totalAmount),
-      yourShare: Number(yourShare),
-      status: "Due"
+      ...formData
     };
 
-    // const existingBills = JSON.parse(
-    //   localStorage.getItem("bills") || "[]"
-    // ) as Bill[];
-
-    // const updatedBills = [...existingBills, newBill];
+    setError("");
 
     setBills(prev => [...prev, newBill]);
-    navigate("/bills");
 
-
-    // frontend-only placeholder
     navigate("/bills");
   };
 
@@ -47,20 +73,35 @@ function AddBill({ setBills }: AddBillProps) {
       <h2 className="text-2xl font-bold mb-6">
         Add New Bill
       </h2>
+
+      {error && (
+        <p className="text-red-500 text-sm mb-4">
+          {error}
+        </p>
+      )}
+
       <form onSubmit={handleSubmit} className="space-y-5">
         <div>
           <label className="block text-sm font-medium mb-1">Bill Name</label>
           <input 
-            className="w-full border rounded-lg px-4 py-2" placeholder="Rent, Water, Internet..." value={billName} onChange={(e) => setBillName(e.target.value)}/>
+            type="text"
+            name="billName"
+            placeholder="Rent, Water, Internet..." 
+            value={formData.billName} 
+            onChange={handleChange}
+            required
+            className="w-full border rounded-lg px-4 py-2"
+            />
         </div>
         
         <div>
           <label className="block text-sm font-medium mb-1">Due Date</label>
           <input 
             type="date" 
-            value={dueDate}
+            name="dueDate"
+            value={formData.dueDate}
             className="w-full border rounded-lg px-4 py-2" 
-            onChange={(e) => setDueDate(e.target.value)}
+            onChange={handleChange}
           />
         </div>
 
@@ -68,9 +109,10 @@ function AddBill({ setBills }: AddBillProps) {
           <label className="block text-sm font-medium mb-1">Total Amount ($)</label>
           <input 
             type="number" 
-            value={totalAmount}
+            name="totalAmount"
+            value={formData.totalAmount}
+            onChange={handleChange}
             className="w-full border rounded-lg px-4 py-2" 
-            onChange={(e) => setTotalAmount(e.target.value)}
           />
         </div>
 
@@ -78,9 +120,10 @@ function AddBill({ setBills }: AddBillProps) {
           <label className="block text-sm font-medium mb-1">Your Share ($)</label>
           <input 
             type="number" 
-            value={yourShare}
+            name="yourShare"
+            value={formData.yourShare}
+            onChange={handleChange}  
             className="w-full border rounded-lg px-4 py-2" 
-            onChange={(e) => setYourShare(e.target.value)}  
           />
         </div>
 
@@ -92,7 +135,8 @@ function AddBill({ setBills }: AddBillProps) {
           </button>
 
           <button 
-          type="button" onClick={() => navigate("/bills")} 
+          type="button" 
+          onClick={() => navigate("/bills")} 
           className="border px-4 py-2 rounded-lg">
           Cancel
           </button>

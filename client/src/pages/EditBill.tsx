@@ -14,18 +14,34 @@ function EditBill({ bills, setBills }: EditBillProps) {
   const billId = Number(id);
   const billToEdit = bills.find(bill => bill.id === billId)
 
-  const [formData, setFormData] = useState<Bill | null>(null);
+  const [formData, setFormData] = useState<BillFormData | null>(null);
+  type BillFormData = {
+    billName: string;
+    dueDate: string;
+    totalAmount: number
+    yourShare: number;
+    status: Bill["status"];
+  };
   const [error, setError] = useState("");
+
+  const today = new Date().toISOString().split('T')[0];
+
 
   // Load existing bill data into form state
   useEffect(() => {
     if (billToEdit) {
-      setFormData(billToEdit);
+      setFormData({
+        billName: billToEdit.billName,
+        dueDate: billToEdit.dueDate,
+        totalAmount: billToEdit.totalAmount,
+        yourShare: billToEdit.yourShare,
+        status: billToEdit.status,
+      });
     }
   }, [billToEdit]);
 
   // Handle invalid bill id
-  if (!billToEdit) {
+  if (!billToEdit && bills.length > 0) {
     return (
       <div>
         <h2>Bill not found</h2>
@@ -38,7 +54,9 @@ function EditBill({ bills, setBills }: EditBillProps) {
     )
   }
 
-  if (!formData) return null;
+  if (!formData) {
+    return <p>Loading...</p>
+  }
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -70,11 +88,18 @@ function EditBill({ bills, setBills }: EditBillProps) {
       return;
     }
 
+    let updatedForm = {...formData};
+
+    if (updatedForm.dueDate < today && updatedForm.status !== "Paid") {
+      updatedForm.status = "Overdue";
+    }
+
     setError("");
 
     setBills(prev =>
       prev.map(bill =>
-        bill.id === billId ? formData : bill
+        bill.id === billId 
+        ? { ...bill, ...updatedForm }: bill
       )
     );
 
@@ -96,7 +121,7 @@ function EditBill({ bills, setBills }: EditBillProps) {
           type="text" 
           placeholder="Bill Name" 
           name="billName"
-          value={formData.billName || ""} 
+          value={formData?.billName || ""} 
           onChange={handleChange} 
           required 
           className="w-full border rounded-lg px-4 py-2"
@@ -129,7 +154,7 @@ function EditBill({ bills, setBills }: EditBillProps) {
           className="w-full border rounded-lg px-4 py-2"
         />
         <select 
-          value={formData?.status || "Due"} 
+          value={formData?.status} 
           onChange={handleChange} 
           name="status"
           required
@@ -144,7 +169,6 @@ function EditBill({ bills, setBills }: EditBillProps) {
         <div className="flex gap-4">
           <button 
             type="submit"
-            onClick={() => navigate("/bills")}
             className="bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-4 py-2 rounded">
               Save Changes
           </button>
