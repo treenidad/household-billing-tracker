@@ -16,7 +16,7 @@ export type Bill = {
   dueDate: string;
   totalAmount: number;
   yourShare: number;
-  category: "Food" | "Housing" | "Transportation" | "Utilites" | "Other"
+  category: "" | "Food" | "Housing" | "Transportation" | "Utilites" | "Other"
   status: "Paid" | "Due" | "Overdue" | "Draft";
 };
 
