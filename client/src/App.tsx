@@ -16,6 +16,7 @@ export type Bill = {
   dueDate: string;
   totalAmount: number;
   yourShare: number;
+  category: "Food" | "Housing" | "Transportation" | "Utilites" | "Other"
   status: "Paid" | "Due" | "Overdue" | "Draft";
 };
 
@@ -33,22 +34,25 @@ function App() {
     dueDate: "2024-07-15",
     totalAmount: 100,
     yourShare: 50,
+    category: "Utilites",
     status: "Due",
   },
   {
     id: 2,
-    billName: "Water Bill",
+    billName: "Groceries",
     dueDate: "2024-07-20",
     totalAmount: 60,
     yourShare: 30,
+    category: "Food",
     status: "Paid",
   },
   {
     id: 3,
-    billName: "Internet Bill",
+    billName: "Car Payment",
     dueDate: "2024-07-10",
-    totalAmount: 80,
-    yourShare: 40,
+    totalAmount: 100,
+    yourShare: 80,
+    category: "Transportation",
     status: "Overdue",
   },
 ];
@@ -59,27 +63,6 @@ const resetDemoData = () => {
   localStorage.setItem(DEMO_KEY, "true");
   setBills(demoBills);
 }
-
-  // Load bills from local storage
-  // const [bills, setBills] = useState<Bill[]>(() => {
-  //   try{
-
-  //     const stored = localStorage.getItem("bills");
-  //     const parsed = stored ? JSON.parse(stored) : [];
-  //     return Array.isArray(parsed) ? parsed : [];
-  //   } catch {
-  //     return [];
-  //   }
-  //   });
-
-  // Demo data for first time users
-  // const [bills, setBills] = useState<Bill[]>(() => {
-  //   const stored = localStorage.getItem("bills");
-  //   if (stored) return JSON.parse(stored);
-
-  //   localStorage.setItem("bills", JSON.stringify(demoBills));
-  //   return demoBills;
-  // });
 
   const [bills, setBills] = useState<Bill[]>(() => {
     try {
@@ -128,7 +111,6 @@ const resetDemoData = () => {
     localStorage.removeItem("auth");
     setIsAuthenticated(false);
   }
-
 
   if (!authChecked) {
     return (

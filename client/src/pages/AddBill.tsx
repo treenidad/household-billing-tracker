@@ -22,6 +22,7 @@ function AddBill({ setBills }: AddBillProps) {
       dueDate: "",
       totalAmount: 0,
       yourShare: 0,
+      category: "",
       status: "Due"
     });
 
