@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import type { Bill } from "../App.tsx";
+import { useState } from "react";
+// import type { Bill } from "../App.tsx";
 import {
   LineChart,
   Line,
