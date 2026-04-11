@@ -17,7 +17,7 @@ export type Bill = {
   totalAmount: number;
   yourShare: number;
   category: "" | "Food" | "Housing" | "Transportation" | "Utilities" | "Other"
-  status: "Paid" | "Due" | "Overdue" | "Draft";
+  status: "Paid" | "Unpaid" | "Overdue";
 };
 
 function App() {
@@ -33,7 +33,7 @@ function App() {
     totalAmount: 100,
     yourShare: 50,
     category: "Utilites",
-    status: "Due",
+    status: "Unpaid",
   },
   {
     id: 2,

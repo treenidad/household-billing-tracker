@@ -26,7 +26,6 @@ Auth: Frontend-only (mocked with localStorage)
 - Navigation between:
     - Dashboard
     - Bills
-    - Settings
 - Navbar hidden on login page
 - Route protection handled cleanly
 
@@ -70,13 +69,15 @@ Backend (Planned)
 client/
   src/
     components/
+      ConfirmModal.tsx
       Layout.tsx
       ProtectedRoute.tsx
     pages/
-      Login.tsx
-      Dashboard.tsx
+      AddBill.tsx
       Bills.tsx
-      Settings.tsx
+      Dashboard.tsx
+      EditBills.tsx
+      Login.tsx
     App.tsx
     main.tsx
 
@@ -98,8 +99,8 @@ Phase A — Frontend (Current)
 - ✅ Protected routes
 - ✅ Navbar layout
 - ✅ Dashboard UI
-- Bills list UI
-- Add/Edit bill forms
+- ✅Bills list UI
+- ✅Add/Edit bill forms
 - Contribution breakdown UI
 
 Phase B — Frontend Data Simulation
