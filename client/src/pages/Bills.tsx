@@ -14,16 +14,31 @@ type BillsProps = {
 
 const statusClasses = {
   Paid: "bg-green-100 text-green-700",
-  Due: "bg-yellow-100 text-yellow-700",
+  Unpaid: "bg-yellow-100 text-yellow-700",
   Overdue: "bg-red-100 text-red-700",
   Draft: "bg-gray-100 text-gray-700",
 };
 
 function Bills({ bills , setBills, resetDemoData }: BillsProps) {
+  const [isResetModalOpen, setIsResetModalOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [billToDelete, setBillToDelete] = useState<number | null>(null)
   
   const navigate = useNavigate();
+
+  const handleResetClick = () => {
+    setIsResetModalOpen(true);
+  };
+
+  const confirmReset = () => {
+    resetDemoData();
+    setIsResetModalOpen(false);
+  }
+
+  const cancelReset = () => {
+    setIsResetModalOpen(false);
+  }
+
   const handleDeleteClick = (id: number) => {
     setBillToDelete(id);
     setIsModalOpen(true);
@@ -42,13 +57,13 @@ function Bills({ bills , setBills, resetDemoData }: BillsProps) {
     setBillToDelete(null);
   }
 
-  const totalDue = bills.reduce((sum, bill) => sum + (bill.status === "Due" ? bill.yourShare : 0), 0);
+  const totalDue = bills.reduce((sum, bill) => sum + (bill.status === "Unpaid" ? bill.yourShare : 0), 0);
 
   const totalOverdue = bills.reduce((sum, bill) => sum + (bill.status === "Overdue" ? bill.yourShare : 0), 0);
-  
-  const totalPaid = bills.reduce((sum, bill) => sum + (bill.status === "Paid" ? bill.yourShare : 0), 0);
 
-  type Status = "Paid" | "Due" | "Overdue" | "Draft";
+  const paidCount = bills.filter(bill => bill.status === "Paid").length;
+
+  type Status = "Paid" | "Unpaid" | "Overdue";
   
   const [selectedStatuses, setSelectedStatuses] = useState<string[]>([]);
 
@@ -67,12 +82,7 @@ function Bills({ bills , setBills, resetDemoData }: BillsProps) {
           </button>
 
           <button
-            onClick={() => {
-              if (confirm("Reset all bills to demo data? This will overwrite your current bills.")) {
-                resetDemoData();
-              } 
-            }
-          }
+            onClick={handleResetClick}
           className="px-4 py-2 text-sm rounded bg-gray-200 hover:bg-gray-300"
           >
             Reset Demo Data
@@ -108,43 +118,50 @@ function Bills({ bills , setBills, resetDemoData }: BillsProps) {
             Bills Paid
           </p>
           <p className="text-2xl font-bold">
-            ${totalPaid.toFixed(2)}
+            {paidCount}
           </p>
         </div>
       </div>
   
 
-      {/* Filter Button */}
-      <div className="px-4 py-2 text-sm border-1 border-gray-300 rounded bg-gray-200 hover:bg-gray-300 relative inline-block mb-4">
-        {/* Dropdown Button */}
-        <button onClick={() => setIsOpen(!isOpen)}>
-          {selectedStatuses.length > 0 ? selectedStatuses.join(", ") : "Filter by Status"}
-        </button>
+{/* Filter Dropdown Wrapper */}
+<div className="relative inline-block mb-4">
+  
+  {/* Button */}
+  <button
+    onClick={() => setIsOpen(!isOpen)}
+    className="px-4 py-2 text-sm border border-gray-300 rounded bg-gray-200 hover:bg-gray-300"
+  >
+    {selectedStatuses.length > 0
+      ? selectedStatuses.join(", ")
+      : "Filter by Status"}
+  </button>
+
+  {/* Dropdown */}
+  {isOpen && (
+    <div className="relative left-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-10">
+      <div className="px-2 py-1">
+        {(["Paid", "Unpaid", "Overdue"] as Status[]).map((status) => (
+          <label key={status} className="block px-4 py-2 text-sm hover:bg-gray-100">
+            <input
+              type="checkbox"
+              className="mr-2"
+              checked={selectedStatuses.includes(status)}
+              onChange={() => {
+                if (selectedStatuses.includes(status)) {
+                  setSelectedStatuses(selectedStatuses.filter((s) => s !== status));
+                } else {
+                  setSelectedStatuses([...selectedStatuses, status]);
+                }
+              }}
+            />
+            {status}
+          </label>
+        ))}
       </div>
-      
-      {/* Dropdown Menu */}
-      {isOpen && (
-        <div className="absolute mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5">
-          <div className="py-1">
-            {(["Paid", "Due", "Overdue", "Draft"] as Status[]).map((status) => (
-              <label key={status} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                <input
-                  type="checkbox"
-                  checked={selectedStatuses.includes(status)}
-                  onChange={() => {
-                    if (selectedStatuses.includes(status)) {
-                      setSelectedStatuses(selectedStatuses.filter((s) => s !== status));
-                    } else {
-                      setSelectedStatuses([...selectedStatuses, status]);
-                    }
-                  }}
-                />
-                {status}
-              </label>
-            ))}
-          </div>
-        </div>
-      )}
+    </div>
+  )}
+</div>
 
       <div className="space-y-4">
         {bills.length === 0 ? (
@@ -195,6 +212,7 @@ function Bills({ bills , setBills, resetDemoData }: BillsProps) {
         ))}
       </div>)}
     </div>
+    
     <ConfirmModal
       isOpen={isModalOpen}
       title="Delete Bill"
@@ -202,7 +220,15 @@ function Bills({ bills , setBills, resetDemoData }: BillsProps) {
       onConfirm={confirmDelete}
       onCancel={cancelDelete}
     />
+    <ConfirmModal
+      isOpen={isResetModalOpen}
+      title="Reset Demo Data"
+      message="Are you sure you want to reset all bills to demo data? This will overwrite your current bills."
+      onConfirm={confirmReset}
+      onCancel={cancelReset}
+    />
   </div>
+  
   );
 }
 

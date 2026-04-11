@@ -18,7 +18,7 @@ function EditBill({ bills, setBills }: EditBillProps) {
   type BillFormData = {
     billName: string;
     dueDate: string;
-    totalAmount: number
+    totalAmount: number;
     yourShare: number;
     status: Bill["status"];
   };
@@ -137,7 +137,7 @@ function EditBill({ bills, setBills }: EditBillProps) {
         />
         <input 
           type="number" 
-          placeholder="Total Amount" 
+          placeholder="0" 
           name="totalAmount"
           value={formData?.totalAmount || 0} 
           onChange={handleChange} 
@@ -160,10 +160,9 @@ function EditBill({ bills, setBills }: EditBillProps) {
           required
           className="w-full border rounded-lg px-4 py-2"
         >
-          <option value="Due">Due</option>
+          <option value="Unpaid">Unpaid</option>
           <option value="Paid">Paid</option>
           <option value="Overdue">Overdue</option>
-          <option value="Draft">Draft</option>
         </select>
 
         <div className="flex gap-4">
