@@ -1,4 +1,5 @@
 import { useState } from "react";
+// import type { Bill } from "../App.tsx";
 import {
   LineChart,
   Line,
@@ -103,7 +104,7 @@ function Dashboard() {
       <div className="flex gap-2 mb-4">
         <button 
           onClick={() => setView("monthly")}
-          className={`px-4 py-2 rounded ${view === "monthly" ? "bg-indigo-600 text-white" : "bg-gray-200"}`}>
+          className={`px-4 py-2 rounded  ${view === "monthly" ? "bg-indigo-600 text-white" : "bg-gray-200"}`}>
           Monthly
         </button>
 
@@ -124,7 +125,7 @@ function Dashboard() {
               <CartesianGrid strokeDasharray="3 3" />
               <XAxis dataKey="month" />
               <YAxis />
-              <Tooltip />
+              <Tooltip /> 
               <Line
                 type="monotone"
                 dataKey="total"

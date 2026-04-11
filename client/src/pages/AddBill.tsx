@@ -12,22 +12,18 @@ type BillFormData = Omit<Bill, "id">;
 function AddBill({ setBills }: AddBillProps) {
   const navigate = useNavigate();
 
-  // const [billName, setBillName] = useState(""); 
-  // const [dueDate, setDueDate] = useState("");
-  // const [totalAmount, setTotalAmount] = useState("");
-  // const [yourShare, setYourShare] = useState("");
+  const today = new Date().toISOString().split('T')[0];
   
   const [formData, setFormData] = useState<BillFormData>({
       billName: "",
-      dueDate: "",
+      dueDate: today,
       totalAmount: 0,
       yourShare: 0,
-      status: "Due"
+      category: "",
+      status: "Unpaid",
     });
 
   const [error, setError] = useState("");
-    
-  // const today = new Date().toISOString().split('T')[0];
 
   const handleChange = (
   e: React.ChangeEvent<HTMLInputElement>
@@ -99,6 +95,7 @@ function AddBill({ setBills }: AddBillProps) {
           <input 
             type="date" 
             name="dueDate"
+            placeholder={today}
             value={formData.dueDate}
             className="w-full border rounded-lg px-4 py-2" 
             onChange={handleChange}
@@ -110,7 +107,8 @@ function AddBill({ setBills }: AddBillProps) {
           <input 
             type="number" 
             name="totalAmount"
-            value={formData.totalAmount}
+            value={formData.totalAmount || ""}
+            placeholder="0"
             onChange={handleChange}
             className="w-full border rounded-lg px-4 py-2" 
           />
@@ -121,7 +119,8 @@ function AddBill({ setBills }: AddBillProps) {
           <input 
             type="number" 
             name="yourShare"
-            value={formData.yourShare}
+            value={formData.yourShare || ""}
+            placeholder="0"
             onChange={handleChange}  
             className="w-full border rounded-lg px-4 py-2" 
           />
