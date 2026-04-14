@@ -186,9 +186,14 @@ function Bills({ bills , setBills, resetDemoData }: BillsProps) {
               <p className="text-sm text-gray-500">Due: {bill.dueDate}</p>
             </div>
 
-            <div className="text-right ">
+            <div className="text-right">
               <p className="font-medium">Your Share: ${bill.yourShare}</p>
               <p className="text-sm text-gray-500">Total: ${bill.totalAmount}</p>
+            </div>
+
+            <div className="text-right">
+              <p className="font-medium">Category:</p>
+              <p className="text-sm text-gray-500">{bill.category}</p>
             </div>
 
             <span

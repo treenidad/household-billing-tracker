@@ -24,9 +24,8 @@ function AddBill({ setBills }: AddBillProps) {
     });
 
   const [error, setError] = useState("");
-
   const handleChange = (
-  e: React.ChangeEvent<HTMLInputElement>
+  e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     const { name, value } = e.target;
 
@@ -124,6 +123,22 @@ function AddBill({ setBills }: AddBillProps) {
             onChange={handleChange}  
             className="w-full border rounded-lg px-4 py-2" 
           />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium mb-1">Category</label>
+          <select
+            name="category"
+            value={formData.category}
+            onChange={handleChange}
+            className="w-full border rounded-lg px-4 py-2"
+          >
+            <option value="">Select a category</option>
+            <option value="Utilities">Utilities</option>
+            <option value="Rent">Rent</option>
+            <option value="Groceries">Groceries</option>
+            <option value="Entertainment">Entertainment</option>
+          </select>
         </div>
 
         <div className="flex gap-4 pt-4">
