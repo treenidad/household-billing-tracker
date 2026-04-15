@@ -3,7 +3,7 @@ import type { Bill } from "../App.tsx";
 
 const categories = ["Food", "Housing", "Transportation", "Utilities", "Other"] as const;
 
-type category = typeof categories[number];
+type categories = typeof categories[number];
 
 export const generateDemoBills = (): Bill[] => {
   const bills: Bill[] = [];
@@ -16,7 +16,7 @@ export const generateDemoBills = (): Bill[] => {
   const today = new Date();
 
   if (dueDate < today) return "Paid";
-  return "Due";
+  return "Unpaid";
 };
 
   for (let i = 0; i < 12; i++) {

@@ -1,6 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { generateDemoBills } from "./data/generateDemoBills";
+// import { generateDemoBills } from "./data/generateDemoBills";
 
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
@@ -26,6 +26,8 @@ function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [authChecked, setAuthChecked] = useState(false);
   const DEMO_KEY = "demo_initialized";
+
+  // const generatedDemoBills: Bill[] = generateDemoBills();
 
   const demoBills: Bill[] = [
   {
