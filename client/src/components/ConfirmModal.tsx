@@ -2,6 +2,7 @@ type ConfirmModalProps = {
     isOpen: boolean;
     title: string;
     message: string;
+    confirmText?: string;
     onConfirm: () => void;
     onCancel: () => void;
 }
@@ -12,6 +13,7 @@ function ConfirmModal({
     message,
     onConfirm,
     onCancel,
+    confirmText
 }: ConfirmModalProps) {
     if(!isOpen) return null;
 
@@ -31,7 +33,7 @@ function ConfirmModal({
                         onClick={onConfirm}
                         className="px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
                     >
-                        Delete
+                        {confirmText || "Confirm"}
                     </button>
                 </div>
             </div>

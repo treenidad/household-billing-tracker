@@ -83,7 +83,7 @@ function Bills({ bills , setBills, resetDemoData }: BillsProps) {
 
           <button
             onClick={handleResetClick}
-          className="px-4 py-2 text-sm rounded bg-gray-200 hover:bg-gray-300"
+            className="px-4 py-2 text-sm rounded bg-gray-200 hover:bg-gray-300"
           >
             Reset Demo Data
           </button>
@@ -222,6 +222,7 @@ function Bills({ bills , setBills, resetDemoData }: BillsProps) {
       isOpen={isModalOpen}
       title="Delete Bill"
       message="Are you sure you want to delete this bill? This action cannot be undone."
+      confirmText="Delete"
       onConfirm={confirmDelete}
       onCancel={cancelDelete}
     />
@@ -229,6 +230,7 @@ function Bills({ bills , setBills, resetDemoData }: BillsProps) {
       isOpen={isResetModalOpen}
       title="Reset Demo Data"
       message="Are you sure you want to reset all bills to demo data? This will overwrite your current bills."
+      confirmText="Reset"
       onConfirm={confirmReset}
       onCancel={cancelReset}
     />
