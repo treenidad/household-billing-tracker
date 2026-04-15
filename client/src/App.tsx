@@ -34,7 +34,7 @@ function App() {
     dueDate: "2024-07-15",
     totalAmount: 100,
     yourShare: 50,
-    category: "Utilites",
+    category: "Utilities",
     status: "Unpaid",
   },
   {
