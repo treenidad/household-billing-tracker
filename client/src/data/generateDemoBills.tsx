@@ -5,6 +5,12 @@ const categories = ["Food", "Housing", "Transportation", "Utilities", "Other"] a
 
 type categories = typeof categories[number];
 
+export const demoMembers = [
+  { id: 1, name: "Alice", active: true },
+  { id: 2, name: "Bob", active: true },
+  { id: 3, name: "Charlie", active: true },
+];
+
 export const generateDemoBills = (): Bill[] => {
   const bills: Bill[] = [];
   let id = 1;
