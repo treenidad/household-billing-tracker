@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { useState, useEffect } from "react";
+// import { generateDemoBills } from "./data/generateDemoBills";
 
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
@@ -10,22 +11,23 @@ import Settings from "./pages/Settings";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Layout from "./components/Layout";
 
+
 export type Bill = {
   id: number;
   billName: string;
   dueDate: string;
   totalAmount: number;
   yourShare: number;
-  category: "" | "Food" | "Housing" | "Transportation" | "Utilites" | "Other"
+  category: "" | "Food" | "Housing" | "Transportation" | "Utilities" | "Other"
   status: "Paid" | "Unpaid" | "Overdue";
 };
-
-
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [authChecked, setAuthChecked] = useState(false);
   const DEMO_KEY = "demo_initialized";
+
+  // const generatedDemoBills: Bill[] = generateDemoBills();
 
   const demoBills: Bill[] = [
   {
@@ -34,7 +36,7 @@ function App() {
     dueDate: "2024-07-15",
     totalAmount: 100,
     yourShare: 50,
-    category: "Utilites",
+    category: "Utilities",
     status: "Unpaid",
   },
   {
