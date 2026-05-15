@@ -39,12 +39,13 @@ export const generateDemoBills = (): Bill[] => {
       bills.push({
         id: id++,
         billName: template.billName,
-        dueDate: dueDate.toISOString().split("T")[0],
+        dueDate: dueDate.toLocaleDateString("en-US"),
         totalAmount: template.baseAmount,
         yourShare: template.share,
         // category: template.category,
         category: categories[Math.floor(Math.random() * categories.length)],
         status: getStatus(dueDate),
+        members: template.members,
       });
     });
   }

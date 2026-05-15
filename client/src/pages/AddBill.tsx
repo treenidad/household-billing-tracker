@@ -2,6 +2,7 @@ import type React from "react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import type { Bill } from "../App.tsx";
+import { demoMembers } from "../data/generateDemoBills";
 
 type AddBillProps = {
   setBills: React.Dispatch<React.SetStateAction<Bill[]>>;
@@ -21,9 +22,20 @@ function AddBill({ setBills }: AddBillProps) {
       yourShare: 0,
       category: "",
       status: "Unpaid",
+      members: [],
     });
 
   const [error, setError] = useState("");
+  
+  const handleMemberChange = (memberId: number) => {
+    setFormData(prev => ({
+      ...prev,
+      members: prev.members.includes(memberId)
+        ? prev.members.filter(m => m !== memberId)
+        : [...prev.members, memberId]
+    }));
+  };
+
   const handleChange = (
   e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
@@ -139,6 +151,23 @@ function AddBill({ setBills }: AddBillProps) {
             <option value="Groceries">Groceries</option>
             <option value="Entertainment">Entertainment</option>
           </select>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium mb-1">Members</label>
+          <div className="space-y-2 border rounded-lg p-3">
+            {demoMembers.map((member) => (
+              <label key={member.id} className="flex items-center">
+                <input
+                  type="checkbox"
+                  checked={formData.members.includes(member.id)}
+                  onChange={() => handleMemberChange(member.id)}
+                  className="mr-2"
+                />
+                {member.name}
+              </label>
+            ))}
+          </div>
         </div>
 
         <div className="flex gap-4 pt-4">

@@ -5,6 +5,7 @@ import type { Bill } from "../App.tsx"
 import type React from "react";
 import ConfirmModal from "../components/ConfirmModal";
 import { useState } from "react";
+import { demoMembers } from "../data/generateDemoBills";
 
 type BillsProps = {
   bills: Bill[];
@@ -17,6 +18,20 @@ const statusClasses = {
   Unpaid: "bg-yellow-100 text-yellow-700",
   Overdue: "bg-red-100 text-red-700",
   Draft: "bg-gray-100 text-gray-700",
+};
+
+const getMemberNames = (memberIds: number[]): string => {
+  return memberIds
+    .map(id => demoMembers.find(m => m.id === id)?.name || "Unknown")
+    .join(", ");
+};
+
+const getMemberDisplay = (memberIds: number[]): { display: string; tooltip: string } => {
+  const names = getMemberNames(memberIds);
+  if (memberIds.length === 1) {
+    return { display: names, tooltip: "" };
+  }
+  return { display: `${memberIds.length} members`, tooltip: names };
 };
 
 function Bills({ bills , setBills, resetDemoData }: BillsProps) {
@@ -57,7 +72,7 @@ function Bills({ bills , setBills, resetDemoData }: BillsProps) {
     setBillToDelete(null);
   }
 
-  const totalDue = bills.reduce((sum, bill) => sum + (bill.status === "Unpaid" ? bill.yourShare : 0), 0);
+  const totalDue = bills.reduce((sum, bill) => sum + (bill.status === "Unpaid" || bill.status === "Overdue" ? bill.yourShare : 0), 0);
 
   const totalOverdue = bills.reduce((sum, bill) => sum + (bill.status === "Overdue" ? bill.yourShare : 0), 0);
 
@@ -70,7 +85,8 @@ function Bills({ bills , setBills, resetDemoData }: BillsProps) {
   //toggle dropdown open/close
   const [isOpen, setIsOpen] = useState(false); 
 
-  const filteredBills = selectedStatuses.length > 0 ? bills.filter((bill) => selectedStatuses.includes(bill.status)) : bills;
+  const filteredBills = (selectedStatuses.length > 0 ? bills.filter((bill) => selectedStatuses.includes(bill.status)) : bills)
+    .sort((a, b) => new Date(b.dueDate).getTime() - new Date(a.dueDate).getTime());
 
   return (
     <div className="max-w-6xl mx-auto p-4 sm:p-6">
@@ -177,13 +193,16 @@ function Bills({ bills , setBills, resetDemoData }: BillsProps) {
       </div>
   ) : (
     <div className="space-y-4">
-      {filteredBills.map((bill) => (
+      {filteredBills.map((bill) => {
+        const { display, tooltip } = getMemberDisplay(bill.members);
+        return (
           <div
             key={bill.id}
             className="bg-white p-5 rounded-xl shadow flex justify-between items-center"> 
             <div>
               <h3 className="font-semibold text-lg">{bill.billName}</h3>
-              <p className="text-sm text-gray-500">Due: {bill.dueDate}</p>
+              <p className="text-sm text-gray-600">Due: {bill.dueDate}</p>
+              <p className="text-sm text-gray-600" title={tooltip}>Assigned To: {display}</p>
             </div>
 
             <div className="text-right">
@@ -213,8 +232,8 @@ function Bills({ bills , setBills, resetDemoData }: BillsProps) {
               </button>
             </div>
           </div>
-          
-        ))}
+        );
+        })}
       </div>)}
     </div>
     
