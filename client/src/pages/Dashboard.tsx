@@ -1,5 +1,5 @@
-import { useState } from "react";
-// import type { Bill } from "../App.tsx";
+import { useEffect, useState } from "react";
+import type { Bill } from "../App.tsx";
 import {
   LineChart,
   Line,
@@ -12,53 +12,72 @@ import {
   Pie,
   Cell,
 } from "recharts";
+// import { generateDemoBills } from "../data/generateDemoBills.tsx";
+
+export const getBills = (): Bill[] => {
+    const billsData = localStorage.getItem("bills");
+    return billsData ? JSON.parse(billsData) : [];
+};
 
 function Dashboard() {
+  const [bills, setBills] = useState<Bill[]>([]);
 
-  const spendingData = [
-    { month: "January", rent: 1200, food: 420, utilities: 180, entertainment: 150 },
-    { month: "February", rent: 1200, food: 400, utilities: 170, entertainment: 130 },
-    { month: "March", rent: 1200, food: 450, utilities: 190, entertainment: 160 },
-    { month: "April", rent: 1200, food: 500, utilities: 200, entertainment: 180 },
-    { month: "May", rent: 1200, food: 380, utilities: 210, entertainment: 120 },
-  ];
+  useEffect(() => {
+    const date = localStorage.getItem("bills");
+    const parse = date ? JSON.parse(date) : [];
+    setBills(parse);
+  }, []);
 
-  // Calculate total spending per month
-  const monthlyTotals = spendingData.map((monthData) => ({
-    month: monthData.month,
-    total: monthData.rent + monthData.food + monthData.utilities + monthData.entertainment,
-  })); 
+  const monthlyTotalsMap: Record<string, number> = {};
 
-  const categoryTotals = [
-    {
-      name: "Rent",
-      value: spendingData.reduce((sum, m) => sum + m.rent, 0),
-    },
-    {
-      name: "Food",
-      value: spendingData.reduce((sum, m) => sum + m.food, 0),
-    },
-    {
-      name: "Utilities",
-      value: spendingData.reduce((sum, m) => sum + m.utilities, 0),
-    }, 
-    {
-      name: "Entertainment",
-      value: spendingData.reduce((sum, m) => sum + m.entertainment, 0),
-    },
-  ];
+  bills.forEach((bill) => {
+    const month = new Date(bill.dueDate).toLocaleString("default", {
+      month: "long",
+    });
 
+    if (!monthlyTotalsMap[month]) {
+      monthlyTotalsMap[month] = 0;
+    }
 
-  const totalSpending = categoryTotals.reduce(
-    (total, category) => total + category.value,
-    0,
-  );
+    monthlyTotalsMap[month] += bill.totalAmount;
+  });
 
-  const highestMonth = monthlyTotals.reduce((max, monthData) =>
-    monthData.total > max.total ? monthData : max,
-  );
+  const monthlyTotals = Object.keys(monthlyTotalsMap).map((month) => ({
+    month,
+    total: monthlyTotalsMap[month],
+  }));
 
-  const averageSpending = totalSpending / spendingData.length;
+  const categoryMap: Record<string, number> = {};
+
+  bills.forEach((bill) => {
+    if (!categoryMap[bill.category]) {
+      categoryMap[bill.category] = 0;
+    }
+
+    categoryMap[bill.category] += bill.totalAmount;
+  });
+
+  const categoryTotals = Object.keys(categoryMap).map((category) => ({
+    name: category,
+    value: categoryMap[category],
+  }));
+
+  const totalSpending = bills.reduce(
+  (sum, bill) => sum + bill.totalAmount,
+  0
+);
+
+const highestMonth =
+  monthlyTotals.length > 0
+    ? monthlyTotals.reduce((max, m) =>
+        m.total > max.total ? m : max
+      )
+    : { month: "-", total: 0 };
+
+const averageSpending =
+  monthlyTotals.length > 0
+    ? totalSpending / monthlyTotals.length
+    : 0;
 
   const [view, setView] = useState<"monthly" | "yearly">("monthly");
 
@@ -129,7 +148,7 @@ function Dashboard() {
               <Line
                 type="monotone"
                 dataKey="total"
-                stroke="#6366f1"
+                stroke="#6366f1" 
                 strokeWidth={3}
               />
             </LineChart>

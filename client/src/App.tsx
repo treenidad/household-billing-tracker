@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { useState, useEffect } from "react";
+import { generateDemoBills } from "./data/generateDemoBills";
 
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
@@ -10,52 +11,57 @@ import Settings from "./pages/Settings";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Layout from "./components/Layout";
 
+
 export type Bill = {
   id: number;
   billName: string;
   dueDate: string;
   totalAmount: number;
   yourShare: number;
-  category: "" | "Food" | "Housing" | "Transportation" | "Utilites" | "Other"
+  category: "" | "Food" | "Housing" | "Transportation" | "Utilities" | "Other"
   status: "Paid" | "Unpaid" | "Overdue";
+  members: number[];
 };
-
-
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [authChecked, setAuthChecked] = useState(false);
   const DEMO_KEY = "demo_initialized";
 
-  const demoBills: Bill[] = [
-  {
-    id: 1,
-    billName: "Electricity Bill",
-    dueDate: "2024-07-15",
-    totalAmount: 100,
-    yourShare: 50,
-    category: "Utilites",
-    status: "Unpaid",
-  },
-  {
-    id: 2,
-    billName: "Groceries",
-    dueDate: "2024-07-20",
-    totalAmount: 60,
-    yourShare: 30,
-    category: "Food",
-    status: "Paid",
-  },
-  {
-    id: 3,
-    billName: "Car Payment",
-    dueDate: "2024-07-10",
-    totalAmount: 100,
-    yourShare: 80,
-    category: "Transportation",
-    status: "Overdue",
-  },
-];
+  const demoBills: Bill[] = generateDemoBills();
+
+//   const demoBills: Bill[] = [
+//   {
+//     id: 1,
+//     billName: "Electricity Bill",
+//     dueDate: "2026-04-15",
+//     totalAmount: 100,
+//     yourShare: 50,
+//     category: "Utilities",
+//     status: "Unpaid",
+//     members: [1, 2],
+//   },
+//   {
+//     id: 2,
+//     billName: "Groceries",
+//     dueDate: "2026-04-20",
+//     totalAmount: 60,
+//     yourShare: 30,
+//     category: "Food",
+//     status: "Paid",
+//     members: [1, 2, 3],
+//   },
+//   {
+//     id: 3,
+//     billName: "Car Payment",
+//     dueDate: "2026-04-10",
+//     totalAmount: 100,
+//     yourShare: 80,
+//     category: "Transportation",
+//     status: "Overdue",
+//     members: [1],
+//   },
+// ];
 
 //  Button to Reset the Demo Data - Useful for testing and for users to quickly see the app with sample data
 const resetDemoData = () => {
