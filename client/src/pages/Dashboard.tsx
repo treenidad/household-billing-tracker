@@ -12,7 +12,7 @@ import {
   Pie,
   Cell,
 } from "recharts";
-import { generateDemoBills } from "../data/generateDemoBills.tsx";
+// import { generateDemoBills } from "../data/generateDemoBills.tsx";
 
 export const getBills = (): Bill[] => {
     const billsData = localStorage.getItem("bills");
@@ -111,7 +111,7 @@ const averageSpending =
       </div>
 
       {/* View Toggle Buttons */}
-      {/* <div className="flex gap-2 mb-4">
+      <div className="flex gap-2 mb-4">
         <button 
           onClick={() => setView("monthly")}
           className={`px-4 py-2 rounded  ${view === "monthly" ? "bg-indigo-600 text-white" : "bg-gray-200"}`}>
@@ -123,7 +123,7 @@ const averageSpending =
           Yearly
         </button>
       </div>
-  */}
+ 
       {/* Charts */}
       {/* Start of Line Chart */}
       <div className="bg-white shadow rounded-xl p-6 mb-6">
