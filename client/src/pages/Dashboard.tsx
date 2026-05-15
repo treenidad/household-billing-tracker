@@ -84,8 +84,6 @@ const averageSpending =
   const displayedData = view === "monthly"
     ? monthlyTotals
     : [];
-  
-  
 
   return (
     <div className="max-w-6xl mx-auto p-4 sm:p-6">
