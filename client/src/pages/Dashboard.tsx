@@ -12,7 +12,7 @@ import {
   Pie,
   Cell,
 } from "recharts";
-import { generateDemoBills } from "../data/generateDemoBills.tsx";
+// import { generateDemoBills } from "../data/generateDemoBills.tsx";
 
 export const getBills = (): Bill[] => {
     const billsData = localStorage.getItem("bills");
@@ -79,11 +79,13 @@ const averageSpending =
     ? totalSpending / monthlyTotals.length
     : 0;
 
-  const [view, setView] = useState("monthly");
+  const [view] = useState("monthly");
 
   const displayedData = view === "monthly"
     ? monthlyTotals
     : [];
+  
+  
 
   return (
     <div className="max-w-6xl mx-auto p-4 sm:p-6">
