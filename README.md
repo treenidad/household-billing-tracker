@@ -10,6 +10,7 @@ This project is currently focused on UI, UX, and frontend architecture, with bac
 Current Phase: Phase A — Frontend Foundations
 Approach: Frontend-first, backend later
 Auth: Frontend-only (mocked with localStorage)
+(No credentials needed - Click on "Sign Up" to continue)
 
 -----------------------------------------------
 ✨ Features (So Far)
@@ -101,13 +102,13 @@ Phase A — Frontend (Current)
 - ✅ Dashboard UI
 - ✅Bills list UI
 - ✅Add/Edit bill forms
-- Contribution breakdown UI
+- ✅Member Contribution
 
 Phase B — Frontend Data Simulation
 
-- Mock API data
-- State management
-- Loading & error states
+- ✅Mock data
+- ✅State management
+- ✅Loading & error states
 
 Phase C — Backend Integration
 
