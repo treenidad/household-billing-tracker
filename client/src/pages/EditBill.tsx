@@ -35,7 +35,7 @@ function EditBill({ bills, setBills }: EditBillProps) {
     if (billToEdit) {
       setFormData({
         billName: billToEdit.billName,
-        dueDate: billToEdit.dueDate,
+        dueDate: new Date(billToEdit.dueDate).toISOString().split('T')[0],
         totalAmount: billToEdit.totalAmount,
         yourShare: billToEdit.yourShare,
         category: billToEdit.category,
@@ -151,7 +151,7 @@ function EditBill({ bills, setBills }: EditBillProps) {
             type="date" 
             placeholder="Due Date" 
             name="dueDate"
-            value={formData?.dueDate || ""} 
+            value={formData.dueDate} 
             onChange={handleChange} 
             required 
             className="w-full border rounded-lg px-4 py-2"

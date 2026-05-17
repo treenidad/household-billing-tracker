@@ -29,7 +29,7 @@ const getMemberNames = (memberIds: number[]): string => {
 const getMemberDisplay = (memberIds: number[]): { display: string; tooltip: string } => {
   const names = getMemberNames(memberIds);
   if (memberIds.length === 1) {
-    return { display: names, tooltip: "" };
+    return { display: names, tooltip: "" }; 
   }
   return { display: `${memberIds.length} members`, tooltip: names };
 };
@@ -37,28 +37,34 @@ const getMemberDisplay = (memberIds: number[]): { display: string; tooltip: stri
 function Bills({ bills , setBills, resetDemoData }: BillsProps) {
   const [isResetModalOpen, setIsResetModalOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [billToDelete, setBillToDelete] = useState<number | null>(null)
+  const [billToDelete, setBillToDelete] = useState<number | null>(null);
+  const [isClearDataModalOpen, setIsClearDataModalOpen] = useState(false);
   
   const navigate = useNavigate();
 
+  // Handle reset demo data
   const handleResetClick = () => {
     setIsResetModalOpen(true);
   };
 
+  // Confirm reset action
   const confirmReset = () => {
     resetDemoData();
     setIsResetModalOpen(false);
   }
 
+  // Cancel reset action
   const cancelReset = () => {
     setIsResetModalOpen(false);
   }
 
+  // Handle delete click
   const handleDeleteClick = (id: number) => {
     setBillToDelete(id);
     setIsModalOpen(true);
   };
 
+  // Confirm delete action
   const confirmDelete = () => {
     if (billToDelete === null) return;
 
@@ -67,9 +73,27 @@ function Bills({ bills , setBills, resetDemoData }: BillsProps) {
     setIsModalOpen(false);
     setBillToDelete(null);
   }
+  
+  // Cancel delete action
   const cancelDelete = () => {
     setIsModalOpen(false);
     setBillToDelete(null);
+  }
+
+  // Handle clear data click
+  const handleClearDataClick = () => {
+    setIsClearDataModalOpen(true);
+  }
+
+  // Confirm clear data action
+  const confirmClear = () => {
+    setBills([]);
+    setIsClearDataModalOpen(false);
+  }
+
+  // Cancel clear data action
+  const cancelClear = () => {
+    setIsClearDataModalOpen(false);
   }
 
   const totalDue = bills.reduce((sum, bill) => sum + (bill.status === "Unpaid" || bill.status === "Overdue" ? bill.yourShare : 0), 0);
@@ -92,9 +116,17 @@ function Bills({ bills , setBills, resetDemoData }: BillsProps) {
     <div className="max-w-6xl mx-auto p-4 sm:p-6">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold">Bills Page</h2>
-        <div className="grid grid-cols-2 gap-4">
-          <button onClick={() => navigate("/bills/add")} className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition">
+        <div className="grid grid-cols-3 gap-4">
+          <button 
+            onClick={() => navigate("/bills/add")} 
+            className="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition">
             + Add Bill
+          </button>
+
+          <button 
+            onClick={handleClearDataClick} 
+            className="px-4 py-2 text-sm rounded bg-gray-200 hover:bg-gray-300">
+            Clear Bill Data
           </button>
 
           <button
@@ -244,6 +276,14 @@ function Bills({ bills , setBills, resetDemoData }: BillsProps) {
       confirmText="Delete"
       onConfirm={confirmDelete}
       onCancel={cancelDelete}
+    />
+    <ConfirmModal
+      isOpen={isClearDataModalOpen}
+      title="Clear Bill Data"
+      message="Are you sure you want to clear all bill data? This will overwrite your current bills."
+      confirmText="Clear"
+      onConfirm={confirmClear}
+      onCancel={cancelClear}
     />
     <ConfirmModal
       isOpen={isResetModalOpen}

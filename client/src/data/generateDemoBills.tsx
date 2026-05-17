@@ -16,7 +16,7 @@ export const generateDemoBills = (): Bill[] => {
   let id = 1;
 
   const startDate = new Date();
-  startDate.setFullYear(startDate.getFullYear() - 2);
+  startDate.setFullYear(startDate.getFullYear() - 1); // Start from 1 year ago
 
   const getStatus = (dueDate: Date): Bill["status"] => {
   const today = new Date();
@@ -25,7 +25,7 @@ export const generateDemoBills = (): Bill[] => {
   return "Unpaid";
 };
 
-  for (let i = 0; i < 12; i++) {
+  for (let i = 0; i < 3; i++) {
     const currentMonth = new Date(startDate);
     currentMonth.setMonth(startDate.getMonth() + i);
 
@@ -42,7 +42,6 @@ export const generateDemoBills = (): Bill[] => {
         dueDate: dueDate.toLocaleDateString("en-US"),
         totalAmount: template.baseAmount,
         yourShare: template.share,
-        // category: template.category,
         category: categories[Math.floor(Math.random() * categories.length)],
         status: getStatus(dueDate),
         members: template.members,
