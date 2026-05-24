@@ -72,7 +72,7 @@ const highestMonth =
     ? monthlyTotals.reduce((max, m) =>
         m.total > max.total ? m : max
       )
-    : { month: "-", total: 0 };
+    : { month: "", total: 0 };
 
 const averageSpending =
   monthlyTotals.length > 0
@@ -81,6 +81,22 @@ const averageSpending =
 
   const [view, setView] = useState<"monthly" | "yearly">("monthly");
 
+  // If there are no bills, display a single message instead of the charts
+  if (bills.length === 0) {
+    return (
+      <div className="max-w-6xl mx-auto p-4 sm:p-6">
+        <h1 className="text-xl sm:text-2xl font-bold mb-6">Dashboard Overview</h1>
+        <div className="bg-white rounded-xl shadow p-6 text-center">
+          <p className="text-gray-500">No data available. Add bills to see the dashboard.</p>
+        </div>
+        <div className="mt-4 mx-auto text-center">
+          <button className="bg-indigo-600 text-white px-4 py-2 rounded" onClick={() => (window.location.href = "/bills/add")}>
+           + Add Bill
+          </button>
+        </div>
+      </div>
+    );
+  }
   const displayedData = view === "monthly"
     ? monthlyTotals
     : [

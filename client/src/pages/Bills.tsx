@@ -180,9 +180,7 @@ function Bills({ bills , setBills, resetDemoData }: BillsProps) {
     onClick={() => setIsOpen(!isOpen)}
     className="px-4 py-2 text-sm border border-gray-300 rounded bg-gray-200 hover:bg-gray-300"
   >
-    {selectedStatuses.length > 0
-      ? selectedStatuses.join(", ")
-      : "Filter by Status"}
+    Filter by Status
   </button>
 
   {/* Dropdown */}
@@ -230,29 +228,30 @@ function Bills({ bills , setBills, resetDemoData }: BillsProps) {
         return (
           <div
             key={bill.id}
-            className="bg-white p-5 rounded-xl shadow flex justify-between items-center"> 
-            <div>
+            className="bg-white p-5 rounded-xl shadow grid grid-cols-5 items-center"> 
+            {/* className={`p-5 rounded-xl shadow grid grid-cols-5 gap-4 items-center ${statusClasses[bill.status] ?? "bg-gray-100 text-gray-700"}`}>  */}
+            <div className="text-left">
               <h3 className="font-semibold text-lg">{bill.billName}</h3>
               <p className="text-sm text-gray-600">Due: {bill.dueDate}</p>
               <p className="text-sm text-gray-600" title={tooltip}>Assigned To: {display}</p>
             </div>
 
-            <div className="text-right">
+            <div className="justify-self-center text-left">
               <p className="font-medium">Your Share: ${bill.yourShare}</p>
               <p className="text-sm text-gray-500">Total: ${bill.totalAmount}</p>
             </div>
 
-            <div className="text-right">
+            <div className="justify-self-center text-left">
               <p className="font-medium">Category:</p>
               <p className="text-sm text-gray-500">{bill.category}</p>
             </div>
 
             <span
-              className={`px-3 py-1 rounded-full text-sm font-medium ${statusClasses[bill.status] ?? "bg-gray-100 text-gray-700"}`}>
+              className={`justify-self-center px-3 py-1 rounded-full text-sm font-medium ${statusClasses[bill.status] ?? "bg-gray-100 text-gray-700"}`}>
               {bill.status}
             </span>
 
-            <div className="flex items-center gap-3">
+            <div className="flex justify-end gap-3">
               <button onClick={() => navigate(`/bills/${bill.id}/edit`)} 
               className="text-indigo-600 hover:underline text-sm">
                 Edit
