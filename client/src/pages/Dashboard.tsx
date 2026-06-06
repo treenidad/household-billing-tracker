@@ -13,6 +13,8 @@ import {
   Pie,
   Cell,
 } from "recharts";
+
+type Category = typeof categories[number];
 // import { generateDemoBills } from "../data/generateDemoBills.tsx";
 
 export const getBills = (): Bill[] => {
@@ -66,10 +68,19 @@ function Dashboard() {
     categoryMap[bill.category] += bill.totalAmount;
   });
 
+  const categoryColors: Record<Category, string> = {
+    Food: "#f97316",
+    Housing: "#6366f1",
+    Transportation: "#22c55e",
+    Utilities: "#ef4444",
+    Other: "#000000",
+  };
+
   // Convert the category map into an array for the pie chart
   const categoryTotals = Object.keys(categoryMap).map((category) => ({
     name: category,
     value: categoryMap[category],
+    fill: categoryColors[category as Category] ?? "#cccccc",
   }));
 
   // Calculate total spending across all bills
@@ -91,15 +102,6 @@ const averageSpending =
   monthlyTotals.length > 0
     ? totalSpending / monthlyTotals.length
     : 0;
-
-
-  const colors = [
-  "#000000",
-  "#6366f1",
-  "#22c55e",
-  "#f97316",
-  "#ef4444",
-];
 
   const [view, setView] = useState<"monthly" | "yearly">("monthly");
 
@@ -210,10 +212,10 @@ const averageSpending =
                 outerRadius={100}
                 label={({ name, value }) => `${name}: $${value}`}
               >
-                {categoryTotals.map((_, index) => (
+                {categoryTotals.map((entry) => (
                   <Cell
-                    key={index}
-                    fill={colors[index] ?? "#cccccc"}
+                    key={entry.name}
+                    fill={entry.fill}
                   />
                 ))}
               </Pie>
