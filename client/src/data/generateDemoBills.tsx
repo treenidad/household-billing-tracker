@@ -1,7 +1,13 @@
 import { billTemplates } from "./billTemplates";
 import type { Bill } from "../App.tsx";
 
-const categories = ["Food", "Housing", "Transportation", "Utilities", "Other"] as const;
+export const categories = [
+  "Food",
+  "Housing",
+  "Transportation",
+  "Utilities", 
+  "Other"
+] as const;
 
 type categories = typeof categories[number];
 
@@ -16,7 +22,7 @@ export const generateDemoBills = (): Bill[] => {
   let id = 1;
 
   const startDate = new Date();
-  startDate.setFullYear(startDate.getFullYear() - 1); // Start from 1 year ago
+  startDate.setFullYear(startDate.getFullYear()); // Start from 1 year ago
 
   const getStatus = (dueDate: Date): Bill["status"] => {
   const today = new Date();
@@ -39,10 +45,10 @@ export const generateDemoBills = (): Bill[] => {
       bills.push({
         id: id++,
         billName: template.billName,
-        dueDate: dueDate.toLocaleDateString("en-US"),
+        dueDate: dueDate.toISOString().split('T')[0], // Store as YYYY-MM-DD string
         totalAmount: template.baseAmount,
         yourShare: template.share,
-        category: categories[Math.floor(Math.random() * categories.length)],
+        category: template.category as categories,
         status: getStatus(dueDate),
         members: template.members,
       });

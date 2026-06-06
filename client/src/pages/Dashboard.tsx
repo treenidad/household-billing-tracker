@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import type { Bill } from "../App.tsx";
+import { categories } from "../data/generateDemoBills.tsx";
 import {
   LineChart,
   Line,
@@ -30,23 +31,31 @@ function Dashboard() {
 
   const monthlyTotalsMap: Record<string, number> = {};
 
+  // Calculate total spending for each month based on bill due dates
   bills.forEach((bill) => {
-    const month = new Date(bill.dueDate).toLocaleString("default", {
-      month: "long",
-    });
+    const date = new Date(bill.dueDate);
+    const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
 
-    if (!monthlyTotalsMap[month]) {
-      monthlyTotalsMap[month] = 0;
+    if (!monthlyTotalsMap[monthKey]) {
+      monthlyTotalsMap[monthKey] = 0;
     }
 
-    monthlyTotalsMap[month] += bill.totalAmount;
+    monthlyTotalsMap[monthKey] += bill.totalAmount;
   });
 
-  const monthlyTotals = Object.keys(monthlyTotalsMap).map((month) => ({
-    month,
-    total: monthlyTotalsMap[month],
-  }));
+  // Convert the monthly totals map into an array sorted by month
+  const monthlyTotals = Object.keys(monthlyTotalsMap).sort().map((monthKey) => {
+    const date = new Date(`${monthKey}-01`);
+    return {
+      month: date.toLocaleString("default", { 
+        month: "short", 
+        year: "numeric" 
+            }),
+      total: monthlyTotalsMap[monthKey],
+    };
+  });
 
+  // Calculate total spending for each category
   const categoryMap: Record<string, number> = {};
 
   bills.forEach((bill) => {
@@ -57,16 +66,19 @@ function Dashboard() {
     categoryMap[bill.category] += bill.totalAmount;
   });
 
+  // Convert the category map into an array for the pie chart
   const categoryTotals = Object.keys(categoryMap).map((category) => ({
     name: category,
     value: categoryMap[category],
   }));
 
+  // Calculate total spending across all bills
   const totalSpending = bills.reduce(
   (sum, bill) => sum + bill.totalAmount,
   0
 );
 
+// Find the month with the highest spending
 const highestMonth =
   monthlyTotals.length > 0
     ? monthlyTotals.reduce((max, m) =>
@@ -74,10 +86,20 @@ const highestMonth =
       )
     : { month: "", total: 0 };
 
+// Calculate average monthly spending
 const averageSpending =
   monthlyTotals.length > 0
     ? totalSpending / monthlyTotals.length
     : 0;
+
+
+  const colors = [
+  "#000000",
+  "#6366f1",
+  "#22c55e",
+  "#f97316",
+  "#ef4444",
+];
 
   const [view, setView] = useState<"monthly" | "yearly">("monthly");
 
@@ -90,7 +112,9 @@ const averageSpending =
           <p className="text-gray-500">No data available. Add bills to see the dashboard.</p>
         </div>
         <div className="mt-4 mx-auto text-center">
-          <button className="bg-indigo-600 text-white px-4 py-2 rounded" onClick={() => (window.location.href = "/bills/add")}>
+          <button 
+            onClick={() => (window.location.href = "/bills/add")}
+            className="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 transition">
            + Add Bill
           </button>
         </div>
@@ -189,7 +213,7 @@ const averageSpending =
                 {categoryTotals.map((_, index) => (
                   <Cell
                     key={index}
-                    fill={["#6366f1", "#22c55e", "#f97316", "#ef4444"][index]}
+                    fill={colors[index] ?? "#cccccc"}
                   />
                 ))}
               </Pie>

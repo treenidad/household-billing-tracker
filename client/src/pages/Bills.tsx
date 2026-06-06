@@ -1,5 +1,3 @@
-// Add Metrics Calculation section after we load the bill list.
-
 import { useNavigate } from "react-router-dom";
 import type { Bill } from "../App.tsx"
 import type React from "react";
@@ -209,7 +207,7 @@ function Bills({ bills , setBills, resetDemoData }: BillsProps) {
   )}
 </div>
 
-      <div className="space-y-4">
+    <div className="space-y-4">
         {bills.length === 0 ? (
       <div className="bg-white rounded-xl shadow p-10 text-center">
         <h3 className="text-lg font-semibold mb-2">No bills yet</h3>
@@ -221,7 +219,7 @@ function Bills({ bills , setBills, resetDemoData }: BillsProps) {
           + Add Bill
         </button>
       </div>
-  ) : (
+    ) : (
     <div className="space-y-4">
       {filteredBills.map((bill) => {
         const { display, tooltip } = getMemberDisplay(bill.members);

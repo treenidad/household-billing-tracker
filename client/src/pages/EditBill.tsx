@@ -35,7 +35,7 @@ function EditBill({ bills, setBills }: EditBillProps) {
     if (billToEdit) {
       setFormData({
         billName: billToEdit.billName,
-        dueDate: new Date(billToEdit.dueDate).toISOString().split('T')[0],
+        dueDate: new Date(billToEdit.dueDate).toISOString().split('T')[0], // Convert to YYYY-MM-DD format for input
         totalAmount: billToEdit.totalAmount,
         yourShare: billToEdit.yourShare,
         category: billToEdit.category,
