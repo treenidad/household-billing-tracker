@@ -1,16 +1,16 @@
 import type React from "react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import type { Bill } from "../App.tsx";
-import { demoMembers } from "../data/generateDemoBills";
+import type { Bill, Member } from "../App.tsx";
 
 type AddBillProps = {
   setBills: React.Dispatch<React.SetStateAction<Bill[]>>;
+  members: Member[];
 };
 
 type BillFormData = Omit<Bill, "id">;
 
-function AddBill({ setBills }: AddBillProps) {
+function AddBill({ setBills, members }: AddBillProps) {
   const navigate = useNavigate();
 
   const today = new Date().toISOString().split('T')[0];
@@ -143,30 +143,36 @@ function AddBill({ setBills }: AddBillProps) {
             name="category"
             value={formData.category}
             onChange={handleChange}
+            required
             className="w-full border rounded-lg px-4 py-2"
           >
             <option value="">Select a category</option>
+            <option value="Food">Food</option>
+            <option value="Housing">Housing</option>
+            <option value="Transportation">Transportation</option>
             <option value="Utilities">Utilities</option>
-            <option value="Rent">Rent</option>
-            <option value="Groceries">Groceries</option>
-            <option value="Entertainment">Entertainment</option>
+            <option value="Other">Other</option>
           </select>
         </div>
 
         <div>
           <label className="block text-sm font-medium mb-1">Members</label>
           <div className="space-y-2 border rounded-lg p-3">
-            {demoMembers.map((member) => (
-              <label key={member.id} className="flex items-center">
-                <input
-                  type="checkbox"
-                  checked={formData.members.includes(member.id)}
-                  onChange={() => handleMemberChange(member.id)}
-                  className="mr-2"
-                />
-                {member.name}
-              </label>
-            ))}
+            {members.length === 0 ? (
+              <p className="text-gray-500">No household members available. Add members on the Members page.</p>
+            ) : (
+              members.map((member) => (
+                <label key={member.id} className="flex items-center">
+                  <input
+                    type="checkbox"
+                    checked={formData.members.includes(member.id)}
+                    onChange={() => handleMemberChange(member.id)}
+                    className="mr-2"
+                  />
+                  {member.name}
+                </label>
+              ))
+            )}
           </div>
         </div>
 

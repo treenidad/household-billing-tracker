@@ -1,16 +1,21 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { generateDemoBills } from "./data/generateDemoBills";
+import { generateDemoBills, demoMembers } from "./data/generateDemoBills";
 
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Bills from "./pages/Bills";
 import AddBill from "./pages/AddBill";
 import EditBill from "./pages/EditBill";
+import Members from "./pages/Members";
 import Settings from "./pages/Settings";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Layout from "./components/Layout";
 
+export type Member = {
+  id: number;
+  name: string;
+};
 
 export type Bill = {
   id: number;
@@ -18,7 +23,7 @@ export type Bill = {
   dueDate: string;
   totalAmount: number;
   yourShare: number;
-  category: "" | "Food" | "Housing" | "Transportation" | "Utilities" | "Other"
+  category: "" | "Food" | "Housing" | "Transportation" | "Utilities" | "Other";
   status: "Paid" | "Unpaid" | "Overdue";
   members: number[];
 };
@@ -66,9 +71,26 @@ function App() {
 //  Button to Reset the Demo Data - Useful for testing and for users to quickly see the app with sample data
 const resetDemoData = () => {
   localStorage.setItem("bills", JSON.stringify(demoBills));
+  localStorage.setItem("members", JSON.stringify(demoMembers));
   localStorage.setItem(DEMO_KEY, "true");
   setBills(demoBills);
+  setMembers(demoMembers);
 }
+
+  const [members, setMembers] = useState<Member[]>(() => {
+    try {
+      const storedMembers = localStorage.getItem("members");
+      if (storedMembers) {
+        const parsed = JSON.parse(storedMembers);
+        return Array.isArray(parsed) ? parsed : demoMembers;
+      }
+      localStorage.setItem("members", JSON.stringify(demoMembers));
+      return demoMembers;
+    } catch (error) {
+      console.error("Error loading members from localStorage:", error);
+      return demoMembers;
+    }
+  });
 
   const [bills, setBills] = useState<Bill[]>(() => {
     try {
@@ -95,7 +117,12 @@ const resetDemoData = () => {
   // Persist bills whenever they change
   useEffect(() => {
     localStorage.setItem("bills", JSON.stringify(bills));
-  }, [bills]);  
+  }, [bills]);
+
+  // Persist members whenever they change
+  useEffect(() => {
+    localStorage.setItem("members", JSON.stringify(members));
+  }, [members]);
 
   // Load auth state on app start
   useEffect(() => {
@@ -133,36 +160,59 @@ const resetDemoData = () => {
         <Route path="/" element={<Login onLogin={handleLogin} />} />
         
         {/* Dashboard Route */}
-        <Route path="/dashboard" element={ <ProtectedRoute isAuthenticated={isAuthenticated}>
-          <Layout onLogout={handleLogout} >
-            <Dashboard />
-          </Layout></ProtectedRoute>} />
+        <Route path="/dashboard" element={ 
+          <ProtectedRoute isAuthenticated={isAuthenticated}>
+            <Layout onLogout={handleLogout} >
+              <Dashboard />
+            </Layout>
+          </ProtectedRoute>}
+        />
         
         {/* Bills Route */}
-        <Route path="/bills" element={ <ProtectedRoute isAuthenticated={isAuthenticated}>
-          <Layout onLogout={handleLogout}>
-            <Bills 
-              bills={bills} 
-              setBills={setBills}
-              resetDemoData={resetDemoData}/>
-          </Layout>
-        </ProtectedRoute>} />
+        <Route path="/bills" element={ 
+          <ProtectedRoute isAuthenticated={isAuthenticated}>
+            <Layout onLogout={handleLogout}>
+              <Bills 
+                bills={bills} 
+                setBills={setBills}
+                resetDemoData={resetDemoData}
+                members={members}
+              />
+            </Layout>
+          </ProtectedRoute>} 
+        />
         
         {/* Add Bill Route */}
-        <Route path="/bills/add" element={ <ProtectedRoute isAuthenticated={isAuthenticated}>
-          <Layout onLogout={handleLogout}>
-            <AddBill setBills={setBills}/>
-          </Layout>
-        </ProtectedRoute>} />
+        <Route path="/bills/add" element={ 
+          <ProtectedRoute isAuthenticated={isAuthenticated}>
+            <Layout onLogout={handleLogout}>
+              <AddBill setBills={setBills} members={members} />
+            </Layout>
+          </ProtectedRoute>}
+        />
         
         {/* Edit Bill Route */}
         <Route path="/bills/:id/edit" element={ 
           <ProtectedRoute isAuthenticated={isAuthenticated}>
             <Layout onLogout={handleLogout}> 
-              <EditBill bills={bills} setBills={setBills}/>
+              <EditBill bills={bills} setBills={setBills} members={members} />
             </Layout>
-          </ProtectedRoute>} />
-        
+          </ProtectedRoute>}
+        />
+
+        <Route path="/members" element={
+          <ProtectedRoute isAuthenticated={isAuthenticated}>
+            <Layout onLogout={handleLogout}>
+              <Members
+                members={members}
+                setMembers={setMembers}
+                bills={bills}
+                setBills={setBills}
+              />
+            </Layout>
+          </ProtectedRoute>}
+        />
+
         {/* // Settings Route */}
         <Route path="/settings" element={
           <ProtectedRoute isAuthenticated={isAuthenticated}>
@@ -170,7 +220,7 @@ const resetDemoData = () => {
               <Settings />
             </Layout>
           </ProtectedRoute>} 
-         />
+        />
       </Routes>
     </BrowserRouter>
   );

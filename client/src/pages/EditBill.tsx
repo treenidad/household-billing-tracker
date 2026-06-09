@@ -1,14 +1,14 @@
 import { useParams, useNavigate } from "react-router-dom";
 import React, { useEffect, useState } from "react";
-import type { Bill } from "../App";
-import { demoMembers } from "../data/generateDemoBills";
+import type { Bill, Member } from "../App";
 
 type EditBillProps = {
   bills: Bill[];
   setBills: React.Dispatch<React.SetStateAction<Bill[]>>;
+  members: Member[];
 }
 
-function EditBill({ bills, setBills }: EditBillProps) {
+function EditBill({ bills, setBills, members }: EditBillProps) {
   const {id} = useParams();
   const navigate = useNavigate();
 
@@ -200,17 +200,21 @@ function EditBill({ bills, setBills }: EditBillProps) {
         <div>
           <label className="block text-sm font-medium mb-1">Members</label>
           <div className="space-y-2 border rounded-lg p-3">
-            {demoMembers.map((member) => (
-              <label key={member.id} className="flex items-center">
-                <input
-                  type="checkbox"
-                  checked={formData?.members?.includes(member.id) || false}
-                  onChange={() => handleMemberChange(member.id)}
-                  className="mr-2"
-                />
-                {member.name}
-              </label>
-            ))}
+            {members.length === 0 ? (
+              <p className="text-gray-500">No household members available. Add members on the Members page.</p>
+            ) : (
+              members.map((member) => (
+                <label key={member.id} className="flex items-center">
+                  <input
+                    type="checkbox"
+                    checked={formData?.members?.includes(member.id) || false}
+                    onChange={() => handleMemberChange(member.id)}
+                    className="mr-2"
+                  />
+                  {member.name}
+                </label>
+              ))
+            )}
           </div>
         </div>
         <div>

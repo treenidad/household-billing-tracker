@@ -1,14 +1,14 @@
 import { useNavigate } from "react-router-dom";
-import type { Bill } from "../App.tsx"
+import type { Bill, Member } from "../App.tsx";
 import type React from "react";
 import ConfirmModal from "../components/ConfirmModal";
 import { useState } from "react";
-import { demoMembers } from "../data/generateDemoBills";
 
 type BillsProps = {
   bills: Bill[];
   setBills: React.Dispatch<React.SetStateAction<Bill[]>>;
   resetDemoData: () => void;
+  members: Member[];
 };
 
 const statusClasses = {
@@ -18,27 +18,27 @@ const statusClasses = {
   Draft: "bg-gray-100 text-gray-700",
 };
 
-const getMemberNames = (memberIds: number[]): string => {
-  return memberIds
-    .map(id => demoMembers.find(m => m.id === id)?.name || "Unknown")
-    .join(", ");
-};
-
-const getMemberDisplay = (memberIds: number[]): { display: string; tooltip: string } => {
-  const names = getMemberNames(memberIds);
-  if (memberIds.length === 1) {
-    return { display: names, tooltip: "" }; 
-  }
-  return { display: `${memberIds.length} members`, tooltip: names };
-};
-
-function Bills({ bills , setBills, resetDemoData }: BillsProps) {
+function Bills({ bills , setBills, resetDemoData, members }: BillsProps) {
   const [isResetModalOpen, setIsResetModalOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [billToDelete, setBillToDelete] = useState<number | null>(null);
   const [isClearDataModalOpen, setIsClearDataModalOpen] = useState(false);
   
   const navigate = useNavigate();
+
+  const getMemberNames = (memberIds: number[]): string => {
+    return memberIds
+      .map((id) => members.find((m) => m.id === id)?.name || "Unknown")
+      .join(", ");
+  };
+
+  const getMemberDisplay = (memberIds: number[]): { display: string; tooltip: string } => {
+    const names = getMemberNames(memberIds);
+    if (memberIds.length === 1) {
+      return { display: names, tooltip: "" };
+    }
+    return { display: `${memberIds.length} members`, tooltip: names };
+  };
 
   // Handle reset demo data
   const handleResetClick = () => {

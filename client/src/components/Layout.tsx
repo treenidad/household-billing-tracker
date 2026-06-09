@@ -24,6 +24,7 @@ function Layout({ children, onLogout }: LayoutProps) {
                 <div className="flex items-center gap-6">
                     <Link to="/dashboard" className="text-grey-600 hover:text-indigo-600">Dashboard</Link>
                     <Link to="/bills" className="text-grey-600 hover:text-indigo-600">Bills</Link>
+                    <Link to="/members" className="text-grey-600 hover:text-indigo-600">Members</Link>
                     {/* <Link to="/settings" className="text-grey-600 hover:text-indigo-600">Settings</Link> */}
 
                     <button onClick={handleLogout} className="bg-red-500 text-white px-3 py-1.5 rounded-lg hover:bg-red-600 transition">
