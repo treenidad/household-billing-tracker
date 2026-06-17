@@ -46,26 +46,61 @@ function Dashboard() {
   });
 
   // Convert the monthly totals map into an array sorted by month
-  const monthlyTotals = Object.keys(monthlyTotalsMap).sort().map((monthKey) => {
-    const date = new Date(`${monthKey}-01`);
-    return {
-      month: date.toLocaleString("default", { 
-        month: "short", 
-        year: "numeric" 
-            }),
-      total: monthlyTotalsMap[monthKey],
-    };
+  const monthlyTotals = Object.keys(monthlyTotalsMap)
+    .sort()
+    .map((monthKey) => {
+      const [year, month] = monthKey.split("-").map(Number);
+      const monthDate = new Date(year, month - 1, 1);
+
+      return {
+        key: monthKey,
+        month: monthDate.toLocaleString("default", {
+          month: "short",
+          year: "numeric",
+        }),
+        total: monthlyTotalsMap[monthKey],
+      };
+    });
+
+  const yearlyTotalsMap: Record<string, number> = {};
+  Object.entries(monthlyTotalsMap).forEach(([monthKey, total]) => {
+    const year = monthKey.split("-")[0];
+    yearlyTotalsMap[year] = (yearlyTotalsMap[year] ?? 0) + total;
   });
 
-  // Calculate total spending for each category
-  const categoryMap: Record<string, number> = {};
+  const yearlyTotals = Object.keys(yearlyTotalsMap)
+    .sort()
+    .map((year) => ({
+      month: year,
+      total: yearlyTotalsMap[year],
+    }));
+
+  const [view, setView] = useState<"monthly" | "yearly">("monthly");
+  const [selectedMonthKey, setSelectedMonthKey] = useState<string>("");
+
+  useEffect(() => {
+    if (!selectedMonthKey && monthlyTotals.length > 0) {
+      setSelectedMonthKey(monthlyTotals[monthlyTotals.length - 1].key);
+    }
+  }, [monthlyTotals, selectedMonthKey]);
+
+  const activeMonthKey =
+    selectedMonthKey || monthlyTotals[monthlyTotals.length - 1]?.key || "";
+
+  const categoryMonthMap: Record<string, number> = {};
 
   bills.forEach((bill) => {
-    if (!categoryMap[bill.category]) {
-      categoryMap[bill.category] = 0;
+    const date = new Date(bill.dueDate);
+    const billMonthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
+    if (activeMonthKey && billMonthKey !== activeMonthKey) {
+      return;
     }
 
-    categoryMap[bill.category] += bill.totalAmount;
+    if (!categoryMonthMap[bill.category]) {
+      categoryMonthMap[bill.category] = 0;
+    }
+
+    categoryMonthMap[bill.category] += bill.totalAmount;
   });
 
   const categoryColors: Record<Category, string> = {
@@ -77,33 +112,32 @@ function Dashboard() {
   };
 
   // Convert the category map into an array for the pie chart
-  const categoryTotals = Object.keys(categoryMap).map((category) => ({
+  const categoryTotals = Object.keys(categoryMonthMap).map((category) => ({
     name: category,
-    value: categoryMap[category],
+    value: categoryMonthMap[category],
     fill: categoryColors[category as Category] ?? "#cccccc",
   }));
 
-  // Calculate total spending across all bills
-  const totalSpending = bills.reduce(
-  (sum, bill) => sum + bill.totalAmount,
-  0
-);
+  const totalSpending = bills.reduce((sum, bill) => sum + bill.totalAmount, 0);
 
-// Find the month with the highest spending
-const highestMonth =
-  monthlyTotals.length > 0
-    ? monthlyTotals.reduce((max, m) =>
-        m.total > max.total ? m : max
-      )
-    : { month: "", total: 0 };
+  const highestMonth =
+    monthlyTotals.length > 0
+      ? monthlyTotals.reduce((max, m) =>
+          m.total > max.total ? m : max
+        )
+      : { month: "", total: 0 };
 
-// Calculate average monthly spending
-const averageSpending =
-  monthlyTotals.length > 0
-    ? totalSpending / monthlyTotals.length
-    : 0;
+  const averageSpending =
+    monthlyTotals.length > 0
+      ? totalSpending / monthlyTotals.length
+      : 0;
 
-  const [view, setView] = useState<"monthly" | "yearly">("monthly");
+  const displayedData = view === "monthly" ? monthlyTotals : yearlyTotals;
+
+  const monthOptions = monthlyTotals.map((month) => ({
+    key: month.key,
+    label: month.month,
+  }));
 
   // If there are no bills, display a single message instead of the charts
   if (bills.length === 0) {
@@ -123,18 +157,6 @@ const averageSpending =
       </div>
     );
   }
-  const displayedData = view === "monthly"
-    ? monthlyTotals
-    : [
-        {
-          month: "2025",
-          total: categoryTotals.reduce((sum, c) => sum + c.value, 0),
-        },
-        {
-          month: "2026",
-          total: "7510",
-        },
-      ];
 
   return (
     <div className="max-w-6xl mx-auto p-4 sm:p-6">
@@ -143,38 +165,61 @@ const averageSpending =
         {/* Total Spending Card */}
         <div className="bg-white rounded-xl shadow p-4">
           <p className="text-sm text-grey-500">Total Spending</p>
-          <p className="text-2xl font-bold">${totalSpending}</p>
+          <p className="text-2xl font-bold">${totalSpending.toFixed(2)}</p>
         </div>
 
         {/* Highest Month Card */}
         <div className="bg-white rounded-xl shadow p-4">
           <p className="text-sm text-grey-500">Highest Month</p>
           <p className="text-2xl font-bold">
-            {highestMonth.month} (${highestMonth.total})
+            {highestMonth.month} (${highestMonth.total.toFixed(2)})
           </p>
         </div>
 
         {/* Average Spending Card */}
         <div className="bg-white rounded-xl shadow p-4">
           <p className="text-sm text-grey-500">Average Spending</p>
-          <p className="text-2xl font-bold">${averageSpending}</p>
+          <p className="text-2xl font-bold">${averageSpending.toFixed(2)}</p>
         </div>
       </div>
 
       {/* View Toggle Buttons */}
-      <div className="flex gap-2 mb-4">
-        <button 
-          onClick={() => setView("monthly")}
-          className={`px-4 py-2 rounded  ${view === "monthly" ? "bg-indigo-600 text-white" : "bg-gray-200"}`}>
-          Monthly
-        </button>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
+        <div className="flex gap-2">
+          <button 
+            onClick={() => setView("monthly")}
+            className={`px-4 py-2 rounded ${view === "monthly" ? "bg-indigo-600 text-white" : "bg-gray-200"}`}>
+            Monthly
+          </button>
 
-        <button onClick={() => setView("yearly")} 
-        className={`px-4 py-2 rounded ${view === "yearly" ? "bg-indigo-600 text-white" : "bg-gray-200"}`}>
-          Yearly
-        </button>
+          <button 
+            onClick={() => setView("yearly")}
+            className={`px-4 py-2 rounded ${view === "yearly" ? "bg-indigo-600 text-white" : "bg-gray-200"}`}>
+            Yearly
+          </button>
+        </div>
+
+        {view === "monthly" && monthOptions.length > 0 && (
+          <div className="flex items-center gap-2">
+            <label htmlFor="month-select" className="text-sm text-gray-600">
+              View category breakdown for:
+            </label>
+            <select
+              id="month-select"
+              value={selectedMonthKey}
+              onChange={(event) => setSelectedMonthKey(event.target.value)}
+              className="border rounded bg-white px-3 py-2"
+            >
+              {monthOptions.map((month) => (
+                <option key={month.key} value={month.key}>
+                  {month.label}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
       </div>
- 
+
       {/* Charts */}
       {/* Start of Line Chart */}
       <div className="bg-white shadow rounded-xl p-6 mb-6">
@@ -202,7 +247,7 @@ const averageSpending =
       {/* Start of Chart */}
       <div className="bg-white shadow rounded-xl p-6 mt-6">
         <h2 className="font-semibold text-lg mb-4">Spending by Category</h2>
-        <div className="h-[300px]">
+        <div className="h-[400px]">
           <ResponsiveContainer>
             <PieChart>
               <Pie
