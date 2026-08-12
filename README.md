@@ -100,15 +100,15 @@ Phase A — Frontend (Current)
 - ✅ Protected routes
 - ✅ Navbar layout
 - ✅ Dashboard UI
-- ✅Bills list UI
-- ✅Add/Edit bill forms
-- ✅Member Contribution
+- ✅ Bills list UI
+- ✅ Add/Edit bill forms
+- ✅ Member Contribution
 
 Phase B — Frontend Data Simulation
 
-- ✅Mock data
-- ✅State management
-- ✅Loading & error states
+- ✅ Mock data
+- ✅ State management
+- ✅ Loading & error states
 
 Phase C — Backend Integration
 
